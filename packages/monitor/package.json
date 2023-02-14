@@ -1,5 +1,5 @@
 {
-  "name": "apply-monitor",
+  "name": "@apply-monitor/monitor",
   "version": "0.0.0",
   "description": "监控工具",
   "main": "lib/index.cjs.js",

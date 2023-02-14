@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "apply-monitor": "workspace:^1.0.0",
+    "@apply-monitor/monitor": "workspace:^0.0.0",
     "vue": "^3.2.45"
   },
   "devDependencies": {

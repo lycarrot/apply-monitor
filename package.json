@@ -1,5 +1,6 @@
 {
   "name": "apply-monitor",
+  "private": "true",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apply-monitor/monitor": "workspace:^0.0.0",
     "apply-monitor": "workspace:^1.0.0"
   }
 }
