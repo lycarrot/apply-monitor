@@ -1,6 +1,8 @@
 import { InitOptions } from '../../types';
-class InitError {
+import { ReportInfo } from '../../utils';
+class InitError extends ReportInfo {
   constructor(options: InitOptions) {
+    super();
     this.init(options);
   }
   init(options: InitOptions) {
