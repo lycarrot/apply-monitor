@@ -1,2 +1,2 @@
-declare let a: number;
-export { a };
+import monitor from './core';
+export default monitor;

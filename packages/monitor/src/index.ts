@@ -1,3 +1,3 @@
-let a = 6666;
+import monitor from './core';
 
-export { a };
+export default monitor;
