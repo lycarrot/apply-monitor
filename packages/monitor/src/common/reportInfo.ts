@@ -2,22 +2,22 @@ import { formatParams } from '../utils';
 class ReportInfo {
   url: string;
   data: any;
-  constructor(options) {
-    this.url = options.url;
-    this.data = options.data;
+  constructor(url: string) {
+    this.url = url;
+    this.data = {};
   }
-  send(): void {
-    this.useImg(this.url, this.data);
+  send(data): void {
+    this.useImg(data);
   }
-  useImg(url: string, data: any): void {
+  useImg(data: any): void {
     // const fn = () => {
     let img = new Image();
-    const spliceStr = url.indexOf('?') === -1 ? '?' : '&';
-    img.src = `${url}${spliceStr}${formatParams(data)}`;
+    const spliceStr = this.url.indexOf('?') === -1 ? '?' : '&';
+    img.src = `${this.url}${spliceStr}${formatParams(data)}`;
     img = null;
     // };
     // this.queue.addFn(requestFun);
   }
 }
 
-export default ReportInfo;
+export { ReportInfo };

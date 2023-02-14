@@ -8,7 +8,6 @@ new Monitor({
     url:'1111',
     apiKey:'22222'
 })
-
 aalert("hello!")
 
 createApp(App).mount("#app");

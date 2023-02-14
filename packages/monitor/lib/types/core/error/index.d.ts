@@ -1,5 +1,6 @@
 import { InitOptions } from '../../types';
-declare class InitError {
+import { ReportInfo } from '../../common';
+declare class InitError extends ReportInfo {
     constructor(options: InitOptions);
     init(options: InitOptions): void;
     handleJS(): void;
