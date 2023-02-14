@@ -1,0 +1,44 @@
+{
+  "name": "apply-monitor",
+  "version": "0.0.0",
+  "description": "监控工具",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
+  "browser": "lib/index.umd.js",
+  "typings": "lib/types/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c ./scripts/build.js ",
+    "build:watch": "rollup -w -c ./scripts/build.js",
+    "lint": "eslint . --ext .js,.ts,.md,.json --max-warnings 0 --cache"
+  },
+  "author": "lycarrot",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-eslint": "^9.0.3",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-jsonc": "^2.6.0",
+    "eslint-plugin-markdown": "^3.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.3",
+    "rollup": "^3.11.0",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.4"
+  },
+  "keywords": [
+    "utils",
+    "throttle",
+    "debounce"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lycarrot/util-lib-tools.git"
+  }
+}
