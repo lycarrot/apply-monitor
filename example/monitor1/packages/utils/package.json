@@ -1,0 +1,19 @@
+{
+  "name": "@zyf2e/monitor-utils",
+  "version": "2.1.54",
+  "description": "@zyf2e/monitor-utils",
+  "author": "cjinhuo",
+  "license": "MIT",
+  "main": "dist/utils.js",
+  "module": "dist/utils.esm.js",
+  "types": "dist/utils.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@zyf2e/monitor-core": "2.1.54",
+    "@zyf2e/monitor-browser": "2.1.54",
+    "@zyf2e/monitor-shared": "2.1.54",
+    "@zyf2e/monitor-types": "2.1.54"
+  }
+}

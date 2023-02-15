@@ -1,0 +1,13 @@
+{
+  "name": "@zyf2e/monitor-shared",
+  "version": "2.1.54",
+  "description": "@zyf2e/monitor-shared",
+  "author": "cjinhuo",
+  "license": "MIT",
+  "main": "dist/shared.js",
+  "module": "dist/shared.esm.js",
+  "types": "dist/shared.d.ts",
+  "files": [
+    "dist"
+  ]
+}

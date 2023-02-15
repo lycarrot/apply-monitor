@@ -1,0 +1,7 @@
+{
+  "extends": "../../api-extractor.json",
+  "mainEntryPointFilePath": "./dist/packages/wx-mini-performance/src/index.d.ts",
+  "dtsRollup": {
+    "publicTrimmedFilePath": "./dist/wx-mini-performance.d.ts"
+  }
+}

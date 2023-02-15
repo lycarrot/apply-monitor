@@ -1,0 +1,25 @@
+{
+  "name": "@zyf2e/monitor-browser",
+  "version": "2.1.54",
+  "description": "A SDK For Monitoring Browser Errors",
+  "author": "cjinhuo",
+  "license": "MIT",
+  "main": "dist/browser.js",
+  "module": "dist/browser.esm.js",
+  "types": "dist/browser.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@zyf2e/monitor-utils": "2.1.54",
+    "@zyf2e/monitor-core": "2.1.54",
+    "@zyf2e/monitor-shared": "2.1.54",
+    "@zyf2e/monitor-types": "2.1.54"
+  },
+  "buildOptions": {
+    "formats": [
+      "esm-bundler",
+      "cjs"
+    ]
+  }
+}
