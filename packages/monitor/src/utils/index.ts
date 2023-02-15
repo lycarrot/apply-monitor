@@ -13,3 +13,7 @@ export function getLines(stack: string): string {
     .map((item) => item.replace(/^\s+at\s+/g, ''))
     .join('^');
 }
+
+export function getNowTime(): number {
+  return Date.now();
+}

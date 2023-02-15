@@ -1,39 +1,61 @@
-import { InitOptions } from '../../types';
+import {
+  InitOptions,
+  MonitorType,
+  ErrorType,
+  JsEventTarget,
+  AjaxEventTarget,
+  Level,
+  VueInstance,
+  ViewModel,
+} from '../../types';
 import { ReportInfo } from '../../common';
-import { getLines } from '../../utils';
+import { getLines, getNowTime } from '../../utils';
 
-type TargetKeys = {
-  src: string;
-  href: string;
-  tagName: string;
+type RejectReason = {
+  message: string;
+  stack: string;
 };
-class InitError extends ReportInfo {
+class InitError {
+  reportInfo: ReportInfo;
   constructor(options: InitOptions) {
-    super(options.url);
     this.init(options);
+    this.reportInfo = new ReportInfo(options);
   }
   init(options: InitOptions) {
     this.handleJS();
+    if (options.isVue) {
+      this.handleVue(options.vue);
+    }
+    if (options.sendWay == 'ajax') {
+      this.handleAajxError();
+    }
   }
+  // js错误监控
   handleJS() {
     window.addEventListener(
       'error',
-      (event) => {
-        let target: EventTarget = event.target;
+      (event: ErrorEvent) => {
+        let target = event.target as JsEventTarget;
         if (target && (target.src || target.href)) {
-          this.send({
-            type: 'error',
-            secondType: 'resourceError',
-            filename: event.target.src || event.target.href, // 哪个文件报错了
-            tagName: event.target.tagName,
+          this.reportInfo.send({
+            type: MonitorType.ERROR,
+            secondType: ErrorType.JS,
+            level: Level.ERROR,
+            time: getNowTime(),
+            message: '资源加载异常了',
+            filename: target.src || target.href,
+            tagName: target.tagName,
           });
         } else {
-          this.send({
-            type: 'error',
-            secondType: 'jsError',
-            filename: event.filename, // 哪个文件报错了
-            message: event.message, // 报错信息
-            position: `${event.lineno}:${event.colno}`, // 报错的行列位置
+          let { message, filename, lineno, colno } = event;
+          this.reportInfo.send({
+            type: MonitorType.ERROR,
+            secondType: ErrorType.JS,
+            level: Level.ERROR,
+            time: getNowTime(),
+            message: message,
+            filename: filename,
+            position: `${lineno}:${colno}`,
             stack: getLines(event.error.stack),
           });
         }
@@ -42,13 +64,14 @@ class InitError extends ReportInfo {
     );
     window.addEventListener(
       'unhandledrejection',
-      (event) => {
-        let message;
-        let filename;
-        let line = 0;
-        let column = 0;
-        let stack = '';
-        let reason = event.reason;
+      (event: PromiseRejectionEvent) => {
+        let message: string;
+        let filename: string;
+        let line: number | string = 0;
+        let column: number | string = 0;
+        let stack: string = '';
+        let reason: string | RejectReason = event.reason;
+        debugger;
         if (typeof reason === 'string') {
           message = reason;
         } else if (typeof reason === 'object') {
@@ -61,16 +84,84 @@ class InitError extends ReportInfo {
           }
           stack = getLines(reason.stack);
         }
-        this.send({
-          type: 'error',
-          secondType: 'promise',
+        this.reportInfo.send({
+          type: MonitorType.ERROR,
+          secondType: ErrorType.PROMISE,
+          level: Level.WARN,
+          time: getNowTime(),
           message,
           filename,
           position: `${line}:${column}`,
+          stack,
         });
       },
       true
     );
+  }
+  //vue错误监控
+  handleVue(Vue: VueInstance) {
+    Vue.config.errorHandler = (error: Error, vm: ViewModel, info: string) => {
+      let componentName: string;
+      if (Object.prototype.toString.call(vm) === '[object Object]') {
+        componentName = vm._isVue
+          ? vm.$options.name || vm.$options._componentTag
+          : vm.name;
+      }
+      this.reportInfo.send({
+        type: MonitorType.ERROR,
+        secondType: ErrorType.VUE,
+        level: Level.ERROR,
+        time: getNowTime(),
+        message: error.message,
+        info: info,
+        componentName: componentName,
+        stack: error.stack,
+      });
+    };
+  }
+  //ajax请求错误
+  handleAajxError() {
+    if (!window.XMLHttpRequest) {
+      return;
+    }
+    let xhrSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function (): void {
+      if (this.addEventListener) {
+        this.addEventListener('error', _handleEvent);
+        this.addEventListener('load', _handleEvent);
+        this.addEventListener('abort', _handleEvent);
+      } else {
+        let tempStateChange = this.onreadystatechange;
+        this.onreadystatechange = function (event: Event) {
+          tempStateChange.apply(this, arguments);
+          if (this.readyState === 4) {
+            _handleEvent(event);
+          }
+        };
+      }
+      return xhrSend.apply(this, arguments);
+    };
+
+    let _handleEvent = (event: Event) => {
+      try {
+        if (!event) return;
+        let target = event.currentTarget as AjaxEventTarget;
+        if (target && target.status !== 200) {
+          this.reportInfo.send({
+            type: MonitorType.ERROR,
+            secondType: ErrorType.AJAX,
+            level: Level.ERROR,
+            time: getNowTime(),
+            message: target.response,
+            status: target.status,
+            statusText: target.statusText,
+            url: target.responseURL,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
   }
 }
 
