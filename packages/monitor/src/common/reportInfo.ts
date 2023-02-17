@@ -1,5 +1,5 @@
 import { formatParams } from '../utils';
-import { CompleteReportData, InitOptions } from '../types';
+import { ErrorReportData, InitOptions } from '../types';
 import { Queue } from './queue';
 class ReportInfo {
   queue: Queue;
@@ -10,10 +10,10 @@ class ReportInfo {
     this.senday = options.sendWay;
     this.queue = new Queue();
   }
-  send(data: CompleteReportData): void {
+  send(data: ErrorReportData): void {
     this.senday == 'img' ? this.useImg(data) : this.useAjax(data);
   }
-  useImg(data: CompleteReportData): void {
+  useImg(data: ErrorReportData): void {
     const fn = () => {
       let img = new Image();
       const spliceStr = this.url.indexOf('?') === -1 ? '?' : '&';
@@ -22,7 +22,7 @@ class ReportInfo {
     };
     this.queue.push(fn);
   }
-  useAjax(data: CompleteReportData) {
+  useAjax(data: ErrorReportData) {
     const fn = () => {
       let xhr = new XMLHttpRequest();
       xhr.open('POST', this.url);

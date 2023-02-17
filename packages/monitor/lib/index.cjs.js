@@ -8,6 +8,7 @@ var defaultOptions = {
 var MonitorType;
 (function (MonitorType) {
     MonitorType["ERROR"] = "error";
+    MonitorType["PERFORMANCE"] = "performance";
 })(MonitorType || (MonitorType = {}));
 var Level;
 (function (Level) {
@@ -24,6 +25,14 @@ var ErrorType;
     ErrorType["PROMISE"] = "promise_error";
     ErrorType["AJAX"] = "ajax_error";
 })(ErrorType || (ErrorType = {}));
+
+var PerformanceType;
+(function (PerformanceType) {
+    PerformanceType["first-paint"] = "FP";
+    PerformanceType["first-contentful-paint"] = "FCP";
+    PerformanceType["largest-contentful-paint"] = "LCP";
+    PerformanceType["layout-shift"] = "CLS";
+})(PerformanceType || (PerformanceType = {}));
 
 function formatParams(obj) {
     var strArr = [];
@@ -42,6 +51,38 @@ function getLines(stack) {
 function getNowTime() {
     return Date.now();
 }
+
+var isPerformanceObserver = function () {
+    return !!window.PerformanceObserver;
+};
+
+// 页面加载完成
+var afterLoad = function (callback) {
+    if (document.readyState === 'complete') {
+        setTimeout(callback);
+    }
+    else {
+        addEventListener('pageshow', callback);
+    }
+};
+// 页面隐藏
+function onHidden(callback, once) {
+    var onHiddenOrPageHide = function (event) {
+        if (event.type === 'pagehide' || document.visibilityState === 'hidden') {
+            callback(event);
+            if (once) {
+                window.removeEventListener('visibilitychange', onHiddenOrPageHide, true);
+                window.removeEventListener('pagehide', onHiddenOrPageHide, true);
+            }
+        }
+    };
+    window.addEventListener('visibilitychange', onHiddenOrPageHide, true);
+    window.addEventListener('pagehide', onHiddenOrPageHide, true);
+}
+// 页面卸载（关闭）或刷新时调用
+var beforeUnload = function (callback) {
+    window.addEventListener('beforeunload', callback);
+};
 
 var Queue = /** @class */ (function () {
     function Queue() {
@@ -109,6 +150,38 @@ var ReportInfo = /** @class */ (function () {
     };
     return ReportInfo;
 }());
+
+var Store = /** @class */ (function () {
+    function Store() {
+        this.store = new Map();
+    }
+    Store.prototype.get = function (key) {
+        return this.store.get(key);
+    };
+    Store.prototype.set = function (key, val) {
+        this.store.set(key, val);
+    };
+    Store.prototype.clear = function () {
+        this.store.clear();
+    };
+    Store.prototype.getValues = function () {
+        return Array.from(this.store).reduce(function (obj, _a) {
+            var key = _a[0], value = _a[1];
+            obj[key] = value;
+            return obj;
+        }, {});
+    };
+    return Store;
+}());
+
+function observe(type, handler) {
+    if (PerformanceObserver.supportedEntryTypes.includes(type)) {
+        var observe_1 = new PerformanceObserver(function (item) {
+            return item.getEntries().map(handler);
+        });
+        observe_1.observe({ type: type });
+    }
+}
 
 var InitError = /** @class */ (function () {
     function InitError(options) {
@@ -259,6 +332,51 @@ var InitError = /** @class */ (function () {
     return InitError;
 }());
 
+function getFP(store) {
+    if (!isPerformanceObserver()) ;
+    else {
+        var entryHandler = function (entry) {
+            if (entry.name) {
+                console.log(entry);
+                var data = {
+                    type: MonitorType.PERFORMANCE,
+                    secondType: PerformanceType[entry.name],
+                    time: getNowTime(),
+                    value: entry.startTime.toFixed(2),
+                };
+                store.set(PerformanceType[entry.name], data);
+            }
+        };
+        // first-paint first-contentful-paint
+        observe('paint', entryHandler);
+    }
+}
+
+var Performance = /** @class */ (function () {
+    function Performance(options) {
+        this.newStore = new Store();
+        this.reportInfo = new ReportInfo(options);
+        this.init();
+    }
+    Performance.prototype.init = function () {
+        getFP(this.newStore);
+        this.report();
+    };
+    Performance.prototype.report = function () {
+        var _this = this;
+        [afterLoad, onHidden, beforeUnload].forEach(function (event) {
+            event(function () {
+                var storeData = _this.newStore.getValues();
+                Object.keys(storeData).forEach(function (key) {
+                    _this.reportInfo.send(storeData[key]);
+                });
+                _this.newStore.clear();
+            });
+        });
+    };
+    return Performance;
+}());
+
 var Monitor = /** @class */ (function () {
     function Monitor(options) {
         this.init(options);
@@ -278,6 +396,7 @@ var Monitor = /** @class */ (function () {
         }
         this.setDefault(options);
         new InitError(options);
+        new Performance(options);
     };
     Monitor.prototype.setDefault = function (options) {
         Object.keys(defaultOptions).forEach(function (key) {
