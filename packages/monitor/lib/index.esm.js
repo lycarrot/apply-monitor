@@ -6,6 +6,7 @@ var defaultOptions = {
 var MonitorType;
 (function (MonitorType) {
     MonitorType["ERROR"] = "error";
+    MonitorType["PERFORMANCE"] = "performance";
 })(MonitorType || (MonitorType = {}));
 var Level;
 (function (Level) {
@@ -22,6 +23,17 @@ var ErrorType;
     ErrorType["PROMISE"] = "promise_error";
     ErrorType["AJAX"] = "ajax_error";
 })(ErrorType || (ErrorType = {}));
+
+var PerformanceType;
+(function (PerformanceType) {
+    PerformanceType["first-paint"] = "FP";
+    PerformanceType["first-contentful-paint"] = "FCP";
+    PerformanceType["largest-contentful-paint"] = "LCP";
+    PerformanceType["layout-shift"] = "CLS";
+    PerformanceType["first-input"] = "FID";
+    PerformanceType["nav-connecttion"] = "NC";
+    PerformanceType["navigation"] = "Nav";
+})(PerformanceType || (PerformanceType = {}));
 
 function formatParams(obj) {
     var strArr = [];
@@ -40,6 +52,46 @@ function getLines(stack) {
 function getNowTime() {
     return Date.now();
 }
+
+var isPerformance = function () {
+    return (!!window.performance &&
+        !!window.performance.getEntriesByType &&
+        !!window.performance.mark);
+};
+var isPerformanceObserver = function () {
+    return !!window.PerformanceObserver;
+};
+var isNavigator = function () {
+    return !!window.navigator;
+};
+
+// 页面加载完成
+var afterLoad = function (callback) {
+    if (document.readyState === 'complete') {
+        setTimeout(callback);
+    }
+    else {
+        addEventListener('pageshow', callback);
+    }
+};
+// 页面隐藏
+function onHidden(callback, once) {
+    var onHiddenOrPageHide = function (event) {
+        if (event.type === 'pagehide' || document.visibilityState === 'hidden') {
+            callback(event);
+            if (once) {
+                window.removeEventListener('visibilitychange', onHiddenOrPageHide, true);
+                window.removeEventListener('pagehide', onHiddenOrPageHide, true);
+            }
+        }
+    };
+    window.addEventListener('visibilitychange', onHiddenOrPageHide, true);
+    window.addEventListener('pagehide', onHiddenOrPageHide, true);
+}
+// 页面卸载（关闭）或刷新时调用
+var beforeUnload = function (callback) {
+    window.addEventListener('beforeunload', callback);
+};
 
 var Queue = /** @class */ (function () {
     function Queue() {
@@ -100,13 +152,78 @@ var ReportInfo = /** @class */ (function () {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', _this.url);
             xhr.withCredentials;
-            xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+            xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(JSON.stringify(data));
         };
         this.queue.push(fn);
     };
     return ReportInfo;
 }());
+
+/******************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __read(o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+}
+
+var Store = /** @class */ (function () {
+    function Store() {
+        this.store = new Map();
+    }
+    Store.prototype.get = function (key) {
+        return this.store.get(key);
+    };
+    Store.prototype.set = function (key, val) {
+        this.store.set(key, val);
+    };
+    Store.prototype.clear = function () {
+        this.store.clear();
+    };
+    Store.prototype.getValues = function () {
+        return Array.from(this.store).reduce(function (obj, _a) {
+            var _b = __read(_a, 2), key = _b[0], value = _b[1];
+            obj[key] = value;
+            return obj;
+        }, {});
+    };
+    return Store;
+}());
+
+function observe(type, handler) {
+    if (PerformanceObserver.supportedEntryTypes.includes(type)) {
+        var ob = new PerformanceObserver(function (item) {
+            return item.getEntries().map(handler);
+        });
+        ob.observe({ type: type, buffered: true });
+        return ob;
+    }
+}
 
 var InitError = /** @class */ (function () {
     function InitError(options) {
@@ -257,6 +374,247 @@ var InitError = /** @class */ (function () {
     return InitError;
 }());
 
+function setPerformanceData$3(store, entry) {
+    if (entry.name) {
+        var data = {
+            type: MonitorType.PERFORMANCE,
+            secondType: PerformanceType[entry.name],
+            time: getNowTime(),
+            value: entry.startTime.toFixed(2),
+        };
+        store.set(PerformanceType[entry.name], data);
+    }
+}
+function getEntriesByFP(store) {
+    var FP = performance.getEntriesByName('first-paint')[0];
+    var FCP = performance.getEntriesByName('first-contentful-paint')[0];
+    setPerformanceData$3(store, FP);
+    setPerformanceData$3(store, FCP);
+}
+function getFP(store) {
+    if (!isPerformanceObserver()) {
+        if (!isPerformance()) {
+            throw new Error('浏览器不支持performance');
+        }
+        else {
+            afterLoad(function () {
+                getEntriesByFP(store);
+            });
+        }
+    }
+    else {
+        var entryHandler = function (entry) {
+            if (ob_1) {
+                ob_1.disconnect();
+            }
+            setPerformanceData$3(store, entry);
+        };
+        // first-paint first-contentful-paint
+        var ob_1 = observe('paint', entryHandler);
+    }
+}
+
+function setPerformanceData$2(store, entry) {
+    if (entry.entryType) {
+        var data = {
+            type: MonitorType.PERFORMANCE,
+            secondType: PerformanceType[entry.entryType],
+            time: getNowTime(),
+            value: entry.startTime.toFixed(2),
+        };
+        store.set(PerformanceType[entry.entryType], data);
+    }
+}
+function getLCP(store) {
+    if (!isPerformanceObserver()) {
+        throw new Error('浏览器不支持PerformanceObserver');
+    }
+    else {
+        var entryHandler = function (entry) {
+            if (ob_1) {
+                ob_1.disconnect();
+            }
+            setPerformanceData$2(store, entry);
+        };
+        // largest-contentful-paint
+        var ob_1 = observe('largest-contentful-paint', entryHandler);
+    }
+}
+
+var value = 0;
+var typeName = 'layout-shift';
+function getCLS(store) {
+    if (!isPerformanceObserver()) {
+        throw new Error('浏览器不支持PerformanceObserver');
+    }
+    else {
+        var entryHandler = function (entry) {
+            if (!entry.hadRecentInput) {
+                value += entry.value;
+            }
+        };
+        var ob_1 = observe(typeName, entryHandler);
+        var stopListening = function () {
+            if (ob_1 === null || ob_1 === void 0 ? void 0 : ob_1.takeRecords) {
+                ob_1.takeRecords().map(function (entry) {
+                    if (!entry.hadRecentInput) {
+                        value += entry.value;
+                    }
+                });
+            }
+            ob_1 === null || ob_1 === void 0 ? void 0 : ob_1.disconnect();
+            var data = {
+                type: MonitorType.PERFORMANCE,
+                secondType: PerformanceType[typeName],
+                time: getNowTime(),
+                value: value.toFixed(2),
+            };
+            store.set(PerformanceType[typeName], data);
+        };
+        onHidden(stopListening, true);
+    }
+}
+
+function setPerformanceData$1(store, entry) {
+    if (entry.entryType) {
+        var data = {
+            type: MonitorType.PERFORMANCE,
+            secondType: PerformanceType[entry.entryType],
+            time: getNowTime(),
+            value: entry.startTime.toFixed(2),
+            event: entry.name,
+        };
+        store.set(PerformanceType[entry.entryType], data);
+    }
+}
+function getFID(store) {
+    if (!isPerformanceObserver()) {
+        throw new Error('浏览器不支持PerformanceObserver');
+    }
+    else {
+        var entryHandler = function (entry) {
+            if (ob_1) {
+                ob_1.disconnect();
+            }
+            setPerformanceData$1(store, entry);
+        };
+        var ob_1 = observe('first-input', entryHandler);
+    }
+}
+
+var entryType = 'navigation';
+function setPerformanceData(store, entry) {
+    var domainLookupStart = entry.domainLookupStart, domainLookupEnd = entry.domainLookupEnd, connectStart = entry.connectStart, connectEnd = entry.connectEnd, secureConnectionStart = entry.secureConnectionStart, requestStart = entry.requestStart, responseStart = entry.responseStart, responseEnd = entry.responseEnd, domInteractive = entry.domInteractive, domContentLoadedEventStart = entry.domContentLoadedEventStart, domContentLoadedEventEnd = entry.domContentLoadedEventEnd, loadEventStart = entry.loadEventStart, fetchStart = entry.fetchStart;
+    var timing = {
+        // DNS解析时间
+        dnsLookup: (domainLookupEnd - domainLookupStart).toFixed(2),
+        // TCP完成握手时间
+        initialConnection: (connectEnd - connectStart).toFixed(2),
+        // ssl连接时间
+        ssl: secureConnectionStart
+            ? (connectEnd - secureConnectionStart).toFixed(2)
+            : 0,
+        // HTTP请求响应完成时间
+        ttfb: (responseStart - requestStart).toFixed(2),
+        // 读取页面第一个字节的时间
+        contentDownload: (responseEnd - responseStart).toFixed(2),
+        // dom解析时间
+        domParse: (domInteractive - responseEnd).toFixed(2),
+        // DOM 准备就绪时间
+        deferExecuteDuration: (domContentLoadedEventStart - domInteractive).toFixed(2),
+        // 脚本加载时间
+        domContentLoadedCallback: (domContentLoadedEventEnd - domContentLoadedEventStart).toFixed(2),
+        // onload事件时间
+        resourceLoad: (loadEventStart - domContentLoadedEventEnd).toFixed(2),
+        // DOM阶段渲染耗时
+        domReady: (domContentLoadedEventEnd - fetchStart).toFixed(2),
+    };
+    var data = {
+        type: MonitorType.PERFORMANCE,
+        secondType: PerformanceType[entryType],
+        time: getNowTime(),
+        value: timing,
+    };
+    store.set(PerformanceType[entryType], data);
+}
+function getPerformanceentryTim() {
+    var entryTim = (performance.getEntriesByType('navigation').length > 0
+        ? performance.getEntriesByType('navigation')[0]
+        : performance.timing);
+    return entryTim;
+}
+function getNavTiming(store) {
+    if (!isPerformanceObserver()) {
+        if (!isPerformance()) {
+            throw new Error('浏览器不支持performance');
+        }
+        else {
+            afterLoad(function () {
+                setPerformanceData(store, getPerformanceentryTim());
+            });
+        }
+    }
+    else {
+        var entryHandler = function (entry) {
+            if (ob_1) {
+                ob_1.disconnect();
+            }
+            setPerformanceData(store, entry);
+        };
+        var ob_1 = observe(entryType, entryHandler);
+    }
+}
+
+function getNavConnection(store) {
+    if (!isNavigator()) {
+        throw new Error('浏览器不支持Navigator');
+    }
+    else {
+        var connection = ('connection' in navigator ? navigator['connection'] : {});
+        var data = {
+            type: MonitorType.PERFORMANCE,
+            secondType: PerformanceType['nav-connecttion'],
+            time: getNowTime(),
+            value: {
+                downlink: connection.downlink,
+                effectiveType: connection.effectiveType,
+                rtt: connection.rtt,
+            },
+        };
+        store.set(PerformanceType['nav-connecttion'], data);
+    }
+}
+
+var Performance = /** @class */ (function () {
+    function Performance(options) {
+        this.newStore = new Store();
+        this.reportInfo = new ReportInfo(options);
+        this.init();
+    }
+    Performance.prototype.init = function () {
+        getFP(this.newStore);
+        getLCP(this.newStore);
+        getCLS(this.newStore);
+        getFID(this.newStore);
+        getNavConnection(this.newStore);
+        getNavTiming(this.newStore);
+        this.report();
+    };
+    Performance.prototype.report = function () {
+        var _this = this;
+        [afterLoad, onHidden, beforeUnload].forEach(function (event) {
+            event(function () {
+                var storeData = _this.newStore.getValues();
+                Object.keys(storeData).forEach(function (key) {
+                    _this.reportInfo.send(storeData[key]);
+                });
+                _this.newStore.clear();
+            });
+        });
+    };
+    return Performance;
+}());
+
 var Monitor = /** @class */ (function () {
     function Monitor(options) {
         this.init(options);
@@ -276,6 +634,7 @@ var Monitor = /** @class */ (function () {
         }
         this.setDefault(options);
         new InitError(options);
+        new Performance(options);
     };
     Monitor.prototype.setDefault = function (options) {
         Object.keys(defaultOptions).forEach(function (key) {

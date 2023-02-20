@@ -1,4 +1,4 @@
-import { IAnyObject } from './common';
+import { ObjAnyAttr } from './common';
 export interface VueInstance {
     config?: VueConfiguration;
     mixin(hooks: {
@@ -25,10 +25,10 @@ export interface ViewModel {
     $options: {
         [key: string]: any;
         name?: string;
-        propsData?: IAnyObject;
+        propsData?: ObjAnyAttr;
         _componentTag?: string;
         __file?: string;
-        props?: IAnyObject;
+        props?: ObjAnyAttr;
     };
     $props: Record<string, unknown>;
 }

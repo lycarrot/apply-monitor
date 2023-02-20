@@ -1,5 +1,6 @@
 export enum MonitorType {
   ERROR = 'error',
+  PERFORMANCE = 'performance',
 }
 
 export enum Level {
@@ -12,25 +13,9 @@ export interface BaseReportData {
   type: MonitorType;
   secondType?: string;
   time: number;
-  level: Level;
+  level?: Level;
 }
 
-export interface CompleteReportData extends BaseReportData {
-  // js
-  message?: string;
-  filename?: string;
-  tagName?: string;
-  position?: string;
-  stack?: string;
-  // Vue
-  info?: string;
-  componentName?: string;
-  //ajax
-  status?: number;
-  statusText?: string;
-  url?: string;
-}
-
-export interface IAnyObject {
+export interface ObjAnyAttr {
   [key: string]: any;
 }

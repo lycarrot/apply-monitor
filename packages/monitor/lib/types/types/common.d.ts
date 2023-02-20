@@ -1,5 +1,6 @@
 export declare enum MonitorType {
-    ERROR = "error"
+    ERROR = "error",
+    PERFORMANCE = "performance"
 }
 export declare enum Level {
     ERROR = "error",
@@ -10,20 +11,8 @@ export interface BaseReportData {
     type: MonitorType;
     secondType?: string;
     time: number;
-    level: Level;
+    level?: Level;
 }
-export interface CompleteReportData extends BaseReportData {
-    message?: string;
-    filename?: string;
-    tagName?: string;
-    position?: string;
-    stack?: string;
-    info?: string;
-    componentName?: string;
-    status?: number;
-    statusText?: string;
-    url?: string;
-}
-export interface IAnyObject {
+export interface ObjAnyAttr {
     [key: string]: any;
 }

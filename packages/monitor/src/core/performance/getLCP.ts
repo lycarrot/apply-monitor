@@ -1,0 +1,43 @@
+import {
+  isPerformanceObserver,
+  isPerformance,
+  getNowTime,
+  afterLoad,
+} from '../../utils';
+import { observe, Store } from '../../common';
+import {
+  PerformanceType,
+  PerformanceReportData,
+  MonitorType,
+} from '../../types';
+
+function setPerformanceData(store: InstanceType<typeof Store>, entry) {
+  if (entry.entryType) {
+    let data: PerformanceReportData = {
+      type: MonitorType.PERFORMANCE,
+      secondType: PerformanceType[entry.entryType],
+      time: getNowTime(),
+      value: entry.startTime.toFixed(2),
+    };
+    store.set(PerformanceType[entry.entryType], data);
+  }
+}
+
+export function getLCP(store: InstanceType<typeof Store>) {
+  if (!isPerformanceObserver()) {
+    throw new Error('浏览器不支持PerformanceObserver');
+  } else {
+    const entryHandler = (entry: PerformanceEntry): void => {
+      if (ob) {
+        ob.disconnect();
+      }
+      setPerformanceData(store, entry);
+    };
+
+    // largest-contentful-paint
+    const ob: PerformanceObserver = observe(
+      'largest-contentful-paint',
+      entryHandler
+    );
+  }
+}

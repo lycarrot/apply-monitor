@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
-import { onMounted } from 'vue'
  
 </script>
 
@@ -14,6 +13,12 @@ import { onMounted } from 'vue'
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
+  <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
+  <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
+  <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
+  <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
+  <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
+  <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
 </template>
 
 <style scoped>
