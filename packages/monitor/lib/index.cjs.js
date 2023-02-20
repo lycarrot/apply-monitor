@@ -34,7 +34,8 @@ var PerformanceType;
     PerformanceType["layout-shift"] = "CLS";
     PerformanceType["first-input"] = "FID";
     PerformanceType["nav-connecttion"] = "NC";
-    PerformanceType["navigation"] = "Nav";
+    PerformanceType["navigation"] = "Navigation";
+    PerformanceType["memory"] = "Memory";
 })(PerformanceType || (PerformanceType = {}));
 
 function formatParams(obj) {
@@ -54,6 +55,21 @@ function getLines(stack) {
 function getNowTime() {
     return Date.now();
 }
+var switchToMB = function (bytes) {
+    if (typeof bytes !== 'number') {
+        return null;
+    }
+    return parseFloat((bytes / Math.pow(1024, 2)).toFixed(2));
+};
+var isIncludeEle = function (node, arr) {
+    if (!node || node === document.documentElement) {
+        return false;
+    }
+    if (arr.includes(node)) {
+        return true;
+    }
+    return isIncludeEle(node.parentElement, arr);
+};
 
 var isPerformance = function () {
     return (!!window.performance &&
@@ -176,6 +192,18 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
+
+function __values(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+}
 
 function __read(o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -504,6 +532,54 @@ function getFID(store) {
     }
 }
 
+function getFSP(store) {
+    if (!MutationObserver) {
+        throw new Error('浏览器不支持MutationObserver');
+    }
+    var ignoreDOMList = ['STYLE', 'SCRIPT', 'LINK', 'META'];
+    var ob = new MutationObserver(function (mutationList) {
+        var e_1, _a, e_2, _b;
+        try {
+            for (var mutationList_1 = __values(mutationList), mutationList_1_1 = mutationList_1.next(); !mutationList_1_1.done; mutationList_1_1 = mutationList_1.next()) {
+                var mutation = mutationList_1_1.value;
+                debugger;
+                if (mutation.addedNodes.length) {
+                    var nodeLists = Array.from(mutation.addedNodes);
+                    try {
+                        for (var nodeLists_1 = (e_2 = void 0, __values(nodeLists)), nodeLists_1_1 = nodeLists_1.next(); !nodeLists_1_1.done; nodeLists_1_1 = nodeLists_1.next()) {
+                            var node = nodeLists_1_1.value;
+                            if (node.nodeType === 1 &&
+                                !ignoreDOMList.includes(node.tagName) &&
+                                !isIncludeEle(node, entry.children)) {
+                                // entry.children.push(node);
+                            }
+                        }
+                    }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    finally {
+                        try {
+                            if (nodeLists_1_1 && !nodeLists_1_1.done && (_b = nodeLists_1.return)) _b.call(nodeLists_1);
+                        }
+                        finally { if (e_2) throw e_2.error; }
+                    }
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (mutationList_1_1 && !mutationList_1_1.done && (_a = mutationList_1.return)) _a.call(mutationList_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        debugger;
+    });
+    ob.observe(document, {
+        childList: true,
+        subtree: true,
+    });
+}
+
 var entryType = 'navigation';
 function setPerformanceData(store, entry) {
     var domainLookupStart = entry.domainLookupStart, domainLookupEnd = entry.domainLookupEnd, connectStart = entry.connectStart, connectEnd = entry.connectEnd, secureConnectionStart = entry.secureConnectionStart, requestStart = entry.requestStart, responseStart = entry.responseStart, responseEnd = entry.responseEnd, domInteractive = entry.domInteractive, domContentLoadedEventStart = entry.domContentLoadedEventStart, domContentLoadedEventEnd = entry.domContentLoadedEventEnd, loadEventStart = entry.loadEventStart, fetchStart = entry.fetchStart;
@@ -567,6 +643,40 @@ function getNavTiming(store) {
     }
 }
 
+var type = 'memory';
+function getMemory(store) {
+    if (!isPerformance()) {
+        throw new Error('浏览器不支持Performance');
+    }
+    if (!isNavigator()) {
+        throw new Error('浏览器不支持Navigator');
+    }
+    var value = {
+        deviceMemory: 'deviceMemory' in navigator ? navigator['deviceMemory'] : 0,
+        hardwareConcurrency: 'hardwareConcurrency' in navigator ? navigator['hardwareConcurrency'] : 0,
+        //   内存大小限制
+        jsHeapSizeLimit: 'memory' in performance
+            ? switchToMB(performance['memory']['jsHeapSizeLimit'])
+            : 0,
+        // 可使用的内存大小
+        totalJSHeapSize: 'memory' in performance
+            ? switchToMB(performance['memory']['totalJSHeapSize'])
+            : 0,
+        //   JS 对象占用的内存数
+        usedJSHeapSize: 'memory' in performance
+            ? switchToMB(performance['memory']['usedJSHeapSize'])
+            : 0,
+    };
+    var data = {
+        type: MonitorType.PERFORMANCE,
+        secondType: PerformanceType[type],
+        time: getNowTime(),
+        value: value,
+    };
+    console.log('value', value);
+    store.set(PerformanceType[type], data);
+}
+
 function getNavConnection(store) {
     if (!isNavigator()) {
         throw new Error('浏览器不支持Navigator');
@@ -600,6 +710,8 @@ var Performance = /** @class */ (function () {
         getFID(this.newStore);
         getNavConnection(this.newStore);
         getNavTiming(this.newStore);
+        getFSP(this.newStore);
+        getMemory(this.newStore);
         this.report();
     };
     Performance.prototype.report = function () {
@@ -615,6 +727,14 @@ var Performance = /** @class */ (function () {
         });
     };
     return Performance;
+}());
+
+var Behavoir = /** @class */ (function () {
+    function Behavoir(options) {
+        this.init(options);
+    }
+    Behavoir.prototype.init = function (options) { };
+    return Behavoir;
 }());
 
 var Monitor = /** @class */ (function () {
@@ -637,6 +757,7 @@ var Monitor = /** @class */ (function () {
         this.setDefault(options);
         new InitError(options);
         new Performance(options);
+        new Behavoir(options);
     };
     Monitor.prototype.setDefault = function (options) {
         Object.keys(defaultOptions).forEach(function (key) {

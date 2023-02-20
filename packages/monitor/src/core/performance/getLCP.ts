@@ -1,9 +1,4 @@
-import {
-  isPerformanceObserver,
-  isPerformance,
-  getNowTime,
-  afterLoad,
-} from '../../utils';
+import { isPerformanceObserver, getNowTime } from '../../utils';
 import { observe, Store } from '../../common';
 import {
   PerformanceType,

@@ -6,7 +6,8 @@ export declare enum PerformanceType {
     'layout-shift' = "CLS",
     'first-input' = "FID",
     'nav-connecttion' = "NC",
-    'navigation' = "Nav"
+    'navigation' = "Navigation",
+    'memory' = "Memory"
 }
 export interface PerformanceReportData extends BaseReportData {
     value?: string | number | ObjAnyAttr;

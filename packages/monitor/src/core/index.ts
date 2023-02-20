@@ -2,6 +2,7 @@ import { InitOptions } from '../types';
 import { defaultOptions } from '../config';
 import initError from './error';
 import initPerformance from './performance';
+import initBehavior from './behavior';
 class Monitor {
   constructor(options: InitOptions) {
     this.init(options);
@@ -22,6 +23,7 @@ class Monitor {
     this.setDefault(options);
     new initError(options);
     new initPerformance(options);
+    new initBehavior(options);
   }
   setDefault(options: InitOptions) {
     Object.keys(defaultOptions).forEach((key) => {

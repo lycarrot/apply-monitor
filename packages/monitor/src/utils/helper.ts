@@ -17,3 +17,22 @@ export function getLines(stack: string): string {
 export function getNowTime(): number {
   return Date.now();
 }
+
+export const switchToMB = (bytes: number): number | null => {
+  if (typeof bytes !== 'number') {
+    return null;
+  }
+  return parseFloat((bytes / Math.pow(1024, 2)).toFixed(2));
+};
+
+export const isIncludeEle = function (node, arr) {
+  if (!node || node === document.documentElement) {
+    return false;
+  }
+
+  if (arr.includes(node)) {
+    return true;
+  }
+
+  return isIncludeEle(node.parentElement, arr);
+};

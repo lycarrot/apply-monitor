@@ -2,7 +2,9 @@ import { getFP } from './getFP';
 import { getLCP } from './getLCP';
 import { getCLS } from './getCLS';
 import { getFID } from './getFID';
+import { getFSP } from './getFSP';
 import { getNavTiming } from './getNavTiming';
+import { getMemory } from './getMemory';
 import { getNavConnection } from './getNavConnection';
 import { Store, ReportInfo } from '../../common';
 import { afterLoad, onHidden, beforeUnload } from '../../utils';
@@ -23,6 +25,8 @@ class Performance {
     getFID(this.newStore);
     getNavConnection(this.newStore);
     getNavTiming(this.newStore);
+    getFSP(this.newStore);
+    getMemory(this.newStore);
     this.report();
   }
   report() {
