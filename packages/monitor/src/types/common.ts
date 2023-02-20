@@ -16,6 +16,6 @@ export interface BaseReportData {
   level?: Level;
 }
 
-export interface IAnyObject {
+export interface ObjAnyAttr {
   [key: string]: any;
 }

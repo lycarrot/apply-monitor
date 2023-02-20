@@ -9,3 +9,7 @@ export const isPerformance = (): boolean => {
 export const isPerformanceObserver = (): boolean => {
   return !!window.PerformanceObserver;
 };
+
+export const isNavigator = (): boolean => {
+  return !!window.navigator;
+};

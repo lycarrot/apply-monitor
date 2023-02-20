@@ -13,6 +13,6 @@ export interface BaseReportData {
     time: number;
     level?: Level;
 }
-export interface IAnyObject {
+export interface ObjAnyAttr {
     [key: string]: any;
 }

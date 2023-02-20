@@ -1,11 +1,16 @@
 type handler = {
   (entry: PerformanceEntry): void;
 };
-export function observe(type: string, handler: handler): void {
+
+export function observe(
+  type: string,
+  handler: handler
+): PerformanceObserver | undefined {
   if (PerformanceObserver.supportedEntryTypes.includes(type)) {
-    const observe = new PerformanceObserver((item) =>
+    const ob: PerformanceObserver = new PerformanceObserver((item) =>
       item.getEntries().map(handler)
     );
-    observe.observe({ type: type });
+    ob.observe({ type: type, buffered: true });
+    return ob;
   }
 }

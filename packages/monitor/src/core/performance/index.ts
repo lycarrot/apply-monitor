@@ -1,7 +1,13 @@
 import { getFP } from './getFP';
+import { getLCP } from './getLCP';
+import { getCLS } from './getCLS';
+import { getFID } from './getFID';
+import { getNavTiming } from './getNavTiming';
+import { getNavConnection } from './getNavConnection';
 import { Store, ReportInfo } from '../../common';
 import { afterLoad, onHidden, beforeUnload } from '../../utils';
 import { InitOptions } from '../../types';
+
 class Performance {
   newStore: InstanceType<typeof Store>;
   reportInfo: ReportInfo;
@@ -12,6 +18,11 @@ class Performance {
   }
   init() {
     getFP(this.newStore);
+    getLCP(this.newStore);
+    getCLS(this.newStore);
+    getFID(this.newStore);
+    getNavConnection(this.newStore);
+    getNavTiming(this.newStore);
     this.report();
   }
   report() {

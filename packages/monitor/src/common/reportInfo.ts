@@ -27,7 +27,7 @@ class ReportInfo {
       let xhr = new XMLHttpRequest();
       xhr.open('POST', this.url);
       xhr.withCredentials;
-      xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+      xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify(data));
     };
     this.queue.push(fn);
