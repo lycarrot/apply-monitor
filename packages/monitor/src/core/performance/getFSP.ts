@@ -9,6 +9,7 @@ let entries: {
   startTime: number;
   children: NodeItem[];
 }[] = [];
+
 export function getFSP(store: InstanceType<typeof Store>) {
   if (!MutationObserver) {
     throw new Error('浏览器不支持MutationObserver');
