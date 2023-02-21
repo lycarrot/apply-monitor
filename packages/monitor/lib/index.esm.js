@@ -534,22 +534,31 @@ function getFSP(store) {
     if (!MutationObserver) {
         throw new Error('浏览器不支持MutationObserver');
     }
+    var next = window.requestAnimationFrame
+        ? requestAnimationFrame
+        : setTimeout;
     var ignoreDOMList = ['STYLE', 'SCRIPT', 'LINK', 'META'];
     var ob = new MutationObserver(function (mutationList) {
         var e_1, _a, e_2, _b;
+        next(function () {
+            entry.startTime = performance.now();
+        });
+        var entry = {
+            startTime: 0,
+            children: [],
+        };
         try {
             for (var mutationList_1 = __values(mutationList), mutationList_1_1 = mutationList_1.next(); !mutationList_1_1.done; mutationList_1_1 = mutationList_1.next()) {
                 var mutation = mutationList_1_1.value;
-                debugger;
                 if (mutation.addedNodes.length) {
                     var nodeLists = Array.from(mutation.addedNodes);
                     try {
                         for (var nodeLists_1 = (e_2 = void 0, __values(nodeLists)), nodeLists_1_1 = nodeLists_1.next(); !nodeLists_1_1.done; nodeLists_1_1 = nodeLists_1.next()) {
                             var node = nodeLists_1_1.value;
                             if (node.nodeType === 1 &&
-                                !ignoreDOMList.includes(node.tagName) &&
+                                !ignoreDOMList.includes(node === null || node === void 0 ? void 0 : node.tagName) &&
                                 !isIncludeEle(node, entry.children)) {
-                                // entry.children.push(node);
+                                entry.children.push(node);
                             }
                         }
                     }
@@ -570,7 +579,7 @@ function getFSP(store) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        debugger;
+        if (entry.children.length) ;
     });
     ob.observe(document, {
         childList: true,
@@ -727,14 +736,6 @@ var Performance = /** @class */ (function () {
     return Performance;
 }());
 
-var Behavoir = /** @class */ (function () {
-    function Behavoir(options) {
-        this.init(options);
-    }
-    Behavoir.prototype.init = function (options) { };
-    return Behavoir;
-}());
-
 var Monitor = /** @class */ (function () {
     function Monitor(options) {
         this.init(options);
@@ -755,7 +756,6 @@ var Monitor = /** @class */ (function () {
         this.setDefault(options);
         new InitError(options);
         new Performance(options);
-        new Behavoir(options);
     };
     Monitor.prototype.setDefault = function (options) {
         Object.keys(defaultOptions).forEach(function (key) {

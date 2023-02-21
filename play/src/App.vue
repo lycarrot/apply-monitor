@@ -1,15 +1,5 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
-var obj = {}
-function a(){
-for (var i = 0; i < 1000; i++) {
-obj[i] = new Array(100000)
-}
-}
-
-setInterval(()=>{
-a()
-},5000)
 
 </script>
 

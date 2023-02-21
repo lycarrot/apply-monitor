@@ -1,14 +1,17 @@
 import { Store } from '../../common';
 import { isIncludeEle } from '../../utils';
 
-type NodeItem = {
-  tagName: string;
-} & Node;
+interface NodeItem extends Node {
+  tagName?: string;
+}
 
+let entries: {
+  startTime: number;
+  children: NodeItem[];
+}[] = [];
 export function getFSP(store: InstanceType<typeof Store>) {
   if (!MutationObserver) {
     throw new Error('浏览器不支持MutationObserver');
-    return;
   }
 
   const next = window.requestAnimationFrame
@@ -16,22 +19,30 @@ export function getFSP(store: InstanceType<typeof Store>) {
     : setTimeout;
   const ignoreDOMList = ['STYLE', 'SCRIPT', 'LINK', 'META'];
   const ob = new MutationObserver((mutationList) => {
+    next(() => {
+      entry.startTime = performance.now();
+    });
+    const entry = {
+      startTime: 0,
+      children: [],
+    };
     for (const mutation of mutationList) {
-      debugger;
       if (mutation.addedNodes.length) {
         let nodeLists: NodeItem[] = Array.from(mutation.addedNodes as NodeList);
         for (const node of nodeLists) {
           if (
             node.nodeType === 1 &&
-            !ignoreDOMList.includes(node.tagName) &&
+            !ignoreDOMList.includes(node?.tagName) &&
             !isIncludeEle(node, entry.children)
           ) {
-            // entry.children.push(node);
+            entry.children.push(node);
           }
         }
       }
     }
-    debugger;
+    if (entry.children.length) {
+      entries.push(entry);
+    }
   });
 
   ob.observe(document, {
