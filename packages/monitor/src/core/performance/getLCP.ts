@@ -6,6 +6,11 @@ import {
   MonitorType,
 } from '../../types';
 
+let lcpDone = false;
+export function isLCPDone() {
+  return lcpDone;
+}
+
 function setPerformanceData(store: InstanceType<typeof Store>, entry) {
   if (entry.entryType) {
     let data: PerformanceReportData = {
@@ -20,9 +25,11 @@ function setPerformanceData(store: InstanceType<typeof Store>, entry) {
 
 export function getLCP(store: InstanceType<typeof Store>) {
   if (!isPerformanceObserver()) {
+    lcpDone = true;
     throw new Error('浏览器不支持PerformanceObserver');
   } else {
     const entryHandler = (entry: PerformanceEntry): void => {
+      lcpDone = true;
       if (ob) {
         ob.disconnect();
       }

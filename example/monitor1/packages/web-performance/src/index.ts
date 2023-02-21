@@ -8,7 +8,7 @@ import 'core-js/es/array/includes'
 import 'core-js/es/object/values'
 import { IConfig, IWebVitals, IMetricsObj } from './types'
 import generateUniqueID from './utils/generateUniqueID'
-import { afterLoad, beforeUnload, unload } from './utils'
+import { onLoaded, beforeUnload, unload } from './utils'
 import { onHidden } from './lib/onHidden'
 import createReporter from './lib/createReporter'
 import MetricsStore from './lib/store'
@@ -70,7 +70,7 @@ class WebVitals implements IWebVitals {
       { once: true, capture: true }
     )
 
-    afterLoad(() => {
+    onLoaded(() => {
       initNavigationTiming(metricsStore, reporter, immediately)
       initFID(metricsStore, reporter, immediately, scoreConfig)
       initFPS(metricsStore, reporter, logFpsCount, immediately)

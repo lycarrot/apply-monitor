@@ -84,7 +84,7 @@ var isNavigator = function () {
 };
 
 // 页面加载完成
-var afterLoad = function (callback) {
+var onLoaded = function (callback) {
     if (document.readyState === 'complete') {
         setTimeout(callback);
     }
@@ -427,7 +427,7 @@ function getFP(store) {
             throw new Error('浏览器不支持performance');
         }
         else {
-            afterLoad(function () {
+            onLoaded(function () {
                 getEntriesByFP(store);
             });
         }
@@ -636,7 +636,7 @@ function getNavTiming(store) {
             throw new Error('浏览器不支持performance');
         }
         else {
-            afterLoad(function () {
+            onLoaded(function () {
                 setPerformanceData(store, getPerformanceentryTim());
             });
         }
@@ -725,7 +725,7 @@ var Performance = /** @class */ (function () {
     };
     Performance.prototype.report = function () {
         var _this = this;
-        [afterLoad, onHidden, beforeUnload].forEach(function (event) {
+        [onLoaded, onHidden, beforeUnload].forEach(function (event) {
             event(function () {
                 var storeData = _this.newStore.getValues();
                 Object.keys(storeData).forEach(function (key) {

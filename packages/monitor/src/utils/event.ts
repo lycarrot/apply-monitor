@@ -1,5 +1,5 @@
 // 页面加载完成
-export const afterLoad = (callback): void => {
+export const onLoaded = (callback): void => {
   if (document.readyState === 'complete') {
     setTimeout(callback);
   } else {

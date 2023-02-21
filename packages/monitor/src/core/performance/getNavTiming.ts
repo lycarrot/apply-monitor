@@ -2,7 +2,7 @@ import {
   isPerformanceObserver,
   isPerformance,
   getNowTime,
-  afterLoad,
+  onLoaded,
 } from '../../utils';
 import { observe, Store } from '../../common';
 import {
@@ -83,7 +83,7 @@ export function getNavTiming(store: InstanceType<typeof Store>) {
     if (!isPerformance()) {
       throw new Error('浏览器不支持performance');
     } else {
-      afterLoad(() => {
+      onLoaded(() => {
         setPerformanceData(store, getPerformanceentryTim());
       });
     }

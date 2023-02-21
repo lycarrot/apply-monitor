@@ -7,7 +7,7 @@ import { getNavTiming } from './getNavTiming';
 import { getMemory } from './getMemory';
 import { getNavConnection } from './getNavConnection';
 import { Store, ReportInfo } from '../../common';
-import { afterLoad, onHidden, beforeUnload } from '../../utils';
+import { onLoaded, onHidden, beforeUnload } from '../../utils';
 import { InitOptions } from '../../types';
 
 class Performance {
@@ -30,7 +30,7 @@ class Performance {
     this.report();
   }
   report() {
-    [afterLoad, onHidden, beforeUnload].forEach((event) => {
+    [onLoaded, onHidden, beforeUnload].forEach((event) => {
       event(() => {
         let storeData = this.newStore.getValues();
         Object.keys(storeData).forEach((key) => {
