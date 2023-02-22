@@ -1,32 +1,19 @@
-import { getNowTime, isNavigator } from '../../utils';
-import { Store } from '../../common';
-import {
-  PerformanceType,
-  PerformanceReportData,
-  MonitorType,
-} from '../../types';
-type Connection = {
-  downlink?: number;
-  effectiveType?: string;
-  rtt?: number;
-};
-export function getNavConnection(store: InstanceType<typeof Store>) {
+import { isNavigator } from '../../utils';
+import { PerformanceType, NavConnection, SetStore } from '../../types';
+
+// 获取网络环境信息
+
+export function getNavConnection(setStore: SetStore) {
   if (!isNavigator()) {
     throw new Error('浏览器不支持Navigator');
   } else {
-    const connection: Connection = (
-      'connection' in navigator ? navigator['connection'] : {}
-    ) as Connection;
-    let data: PerformanceReportData = {
-      type: MonitorType.PERFORMANCE,
-      secondType: PerformanceType['nav-connecttion'],
-      time: getNowTime(),
-      value: {
-        downlink: connection.downlink,
-        effectiveType: connection.effectiveType,
-        rtt: connection.rtt,
-      },
+    const connection: NavConnection =
+      'connection' in navigator ? navigator['connection'] : {};
+    let value = {
+      downlink: connection.downlink,
+      effectiveType: connection.effectiveType,
+      rtt: connection.rtt,
     };
-    store.set(PerformanceType['nav-connecttion'], data);
+    setStore(PerformanceType.NC, value);
   }
 }

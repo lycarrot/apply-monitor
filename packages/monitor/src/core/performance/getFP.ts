@@ -1,42 +1,27 @@
-import {
-  isPerformanceObserver,
-  isPerformance,
-  getNowTime,
-  onLoaded,
-} from '../../utils';
-import { observe, Store } from '../../common';
-import {
-  PerformanceType,
-  PerformanceReportData,
-  MonitorType,
-} from '../../types';
+import { isPerformanceObserver, isPerformance, onLoaded } from '../../utils';
+import { observe } from '../../common';
+import { PerformanceType, SetStore } from '../../types';
 
-function setPerformanceData(store: InstanceType<typeof Store>, entry) {
-  if (entry.name) {
-    let data: PerformanceReportData = {
-      type: MonitorType.PERFORMANCE,
-      secondType: PerformanceType[entry.name],
-      time: getNowTime(),
-      value: entry.startTime.toFixed(2),
-    };
-    store.set(PerformanceType[entry.name], data);
-  }
+// first-paint  从页面加载开始到第一个像素绘制到屏幕上的时间
+//  first-contentful-paint 从页面加载开始到页面内容的任何部分在屏幕上完成渲染的时间
+
+function getEntriesByFP(setStore: SetStore) {
+  let entryFP: PerformanceEntry =
+    performance.getEntriesByName('first-paint')[0];
+  let entryFCP: PerformanceEntry = performance.getEntriesByName(
+    'first-contentful-paint'
+  )[0];
+  setStore(PerformanceType.FP, entryFP.startTime.toFixed(2));
+  setStore(PerformanceType.FCP, entryFCP.startTime.toFixed(2));
 }
 
-function getEntriesByFP(store: InstanceType<typeof Store>) {
-  let FP = performance.getEntriesByName('first-paint')[0];
-  let FCP = performance.getEntriesByName('first-contentful-paint')[0];
-  setPerformanceData(store, FP);
-  setPerformanceData(store, FCP);
-}
-
-export function getFP(store: InstanceType<typeof Store>) {
+export function getFP(setStore: SetStore) {
   if (!isPerformanceObserver()) {
     if (!isPerformance()) {
       throw new Error('浏览器不支持performance');
     } else {
       onLoaded(() => {
-        getEntriesByFP(store);
+        getEntriesByFP(setStore);
       });
     }
   } else {
@@ -44,10 +29,8 @@ export function getFP(store: InstanceType<typeof Store>) {
       if (ob) {
         ob.disconnect();
       }
-      setPerformanceData(store, entry);
+      setStore(PerformanceType.FP, entry.startTime.toFixed(2));
     };
-
-    // first-paint first-contentful-paint
     const ob: PerformanceObserver = observe('paint', entryHandler);
   }
 }

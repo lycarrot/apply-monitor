@@ -1,20 +1,10 @@
-import {
-  isPerformanceObserver,
-  isPerformance,
-  getNowTime,
-  onLoaded,
-} from '../../utils';
-import { observe, Store } from '../../common';
-import {
-  PerformanceType,
-  PerformanceReportData,
-  MonitorType,
-  ObjAnyAttr,
-} from '../../types';
+import { isPerformanceObserver, isPerformance, onLoaded } from '../../utils';
+import { observe } from '../../common';
+import { PerformanceType, ObjAnyAttr, SetStore } from '../../types';
 
-const entryType = 'navigation';
+// navigation 可以获取到用户访问一个页面的每个阶段的精确时间
 function setPerformanceData(
-  store: InstanceType<typeof Store>,
+  setStore: SetStore,
   entry: PerformanceNavigationTiming
 ) {
   const {
@@ -60,13 +50,8 @@ function setPerformanceData(
     // DOM阶段渲染耗时
     domReady: (domContentLoadedEventEnd - fetchStart).toFixed(2),
   };
-  let data: PerformanceReportData = {
-    type: MonitorType.PERFORMANCE,
-    secondType: PerformanceType[entryType],
-    time: getNowTime(),
-    value: timing,
-  };
-  store.set(PerformanceType[entryType], data);
+
+  setStore(PerformanceType.NAV, timing);
 }
 
 function getPerformanceentryTim(): PerformanceNavigationTiming {
@@ -78,13 +63,13 @@ function getPerformanceentryTim(): PerformanceNavigationTiming {
   return entryTim;
 }
 
-export function getNavTiming(store: InstanceType<typeof Store>) {
+export function getNavTiming(setStore: SetStore) {
   if (!isPerformanceObserver()) {
     if (!isPerformance()) {
       throw new Error('浏览器不支持performance');
     } else {
       onLoaded(() => {
-        setPerformanceData(store, getPerformanceentryTim());
+        setPerformanceData(setStore, getPerformanceentryTim());
       });
     }
   } else {
@@ -92,8 +77,8 @@ export function getNavTiming(store: InstanceType<typeof Store>) {
       if (ob) {
         ob.disconnect();
       }
-      setPerformanceData(store, entry);
+      setPerformanceData(setStore, entry);
     };
-    const ob: PerformanceObserver = observe(entryType, entryHandler);
+    const ob: PerformanceObserver = observe(PerformanceType.NAV, entryHandler);
   }
 }

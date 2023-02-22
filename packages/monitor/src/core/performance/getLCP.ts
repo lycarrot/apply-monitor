@@ -1,29 +1,15 @@
 import { isPerformanceObserver, getNowTime } from '../../utils';
-import { observe, Store } from '../../common';
-import {
-  PerformanceType,
-  PerformanceReportData,
-  MonitorType,
-} from '../../types';
+import { observe } from '../../common';
+import { PerformanceType, SetStore } from '../../types';
+
+// largest-contentful-paint 从页面加载开始到最大文本块或图像元素在屏幕上完成渲染的时间
 
 let lcpDone = false;
 export function isLCPDone() {
   return lcpDone;
 }
 
-function setPerformanceData(store: InstanceType<typeof Store>, entry) {
-  if (entry.entryType) {
-    let data: PerformanceReportData = {
-      type: MonitorType.PERFORMANCE,
-      secondType: PerformanceType[entry.entryType],
-      time: getNowTime(),
-      value: entry.startTime.toFixed(2),
-    };
-    store.set(PerformanceType[entry.entryType], data);
-  }
-}
-
-export function getLCP(store: InstanceType<typeof Store>) {
+export function getLCP(setStore: SetStore) {
   if (!isPerformanceObserver()) {
     lcpDone = true;
     throw new Error('浏览器不支持PerformanceObserver');
@@ -33,10 +19,8 @@ export function getLCP(store: InstanceType<typeof Store>) {
       if (ob) {
         ob.disconnect();
       }
-      setPerformanceData(store, entry);
+      setStore(PerformanceType.LCP, entry.startTime.toFixed(2));
     };
-
-    // largest-contentful-paint
     const ob: PerformanceObserver = observe(
       'largest-contentful-paint',
       entryHandler

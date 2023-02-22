@@ -13,3 +13,30 @@ export const isPerformanceObserver = (): boolean => {
 export const isNavigator = (): boolean => {
   return !!window.navigator;
 };
+
+// dom 对象是否在屏幕内
+export const isInScreen = (dom) => {
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const rectInfo = dom.getBoundingClientRect();
+  if (
+    rectInfo.left >= 0 &&
+    rectInfo.left < viewportWidth &&
+    rectInfo.top >= 0 &&
+    rectInfo.top < viewportHeight
+  ) {
+    return true;
+  }
+};
+
+export const isIncludeEle = function (node, arr) {
+  if (!node || node === document.documentElement) {
+    return false;
+  }
+
+  if (arr.includes(node)) {
+    return true;
+  }
+
+  return isIncludeEle(node.parentElement, arr);
+};

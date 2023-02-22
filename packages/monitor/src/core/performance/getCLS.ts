@@ -1,15 +1,12 @@
-import { isPerformanceObserver, getNowTime, onHidden } from '../../utils';
-import { observe, Store } from '../../common';
-import {
-  PerformanceType,
-  PerformanceReportData,
-  MonitorType,
-  LayoutShift,
-} from '../../types';
+import { isPerformanceObserver, onHidden } from '../../utils';
+import { observe } from '../../common';
+import { PerformanceType, LayoutShift, SetStore } from '../../types';
+
+// layout-shift 从页面加载开始和其生命周期状态变为隐藏期间发生的所有意外布局偏移的累积分数
 
 let value: number = 0;
-let typeName = 'layout-shift';
-export function getCLS(store: InstanceType<typeof Store>) {
+
+export function getCLS(setStore: SetStore) {
   if (!isPerformanceObserver()) {
     throw new Error('浏览器不支持PerformanceObserver');
   } else {
@@ -18,7 +15,8 @@ export function getCLS(store: InstanceType<typeof Store>) {
         value += entry.value;
       }
     };
-    const ob: PerformanceObserver = observe(typeName, entryHandler);
+
+    const ob: PerformanceObserver = observe(PerformanceType.CLS, entryHandler);
 
     const stopListening = () => {
       if (ob?.takeRecords) {
@@ -29,14 +27,10 @@ export function getCLS(store: InstanceType<typeof Store>) {
         });
       }
       ob?.disconnect();
-      let data: PerformanceReportData = {
-        type: MonitorType.PERFORMANCE,
-        secondType: PerformanceType[typeName],
-        time: getNowTime(),
-        value: value.toFixed(2),
-      };
-      store.set(PerformanceType[typeName], data);
+
+      setStore(PerformanceType.CLS, value.toFixed(2));
     };
+
     onHidden(stopListening, true);
   }
 }

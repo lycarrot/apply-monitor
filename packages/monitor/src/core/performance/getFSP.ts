@@ -1,52 +1,30 @@
-import { getNowTime, onLoaded, isIncludeEle } from '../../utils';
-import { Store } from '../../common';
-import {
-  PerformanceType,
-  PerformanceReportData,
-  MonitorType,
-} from '../../types';
+import { getNowTime, onLoaded, isIncludeEle, isInScreen } from '../../utils';
+import { PerformanceType, NodeItem, SourceItem, SetStore } from '../../types';
 import { isLCPDone } from './getLCP';
 
-interface NodeItem extends Node {
-  tagName?: string;
-}
-
-interface SourceItem extends PerformanceEntry {
-  initiatorType?: string;
-  fetchStart?: number;
-  responseEnd?: number;
-}
+//first-screen-paint 首屏渲染时间
 
 let entries: {
   startTime: number;
   children: NodeItem[];
 }[] = [];
 
-let entryType: string = 'first-screen-paint';
-
 let isOnLoaded = false;
+
 onLoaded(() => {
   isOnLoaded = true;
 });
 
 let timer;
-let observer;
-function checkDOMChange(store: InstanceType<typeof Store>) {
+function checkDOMChange(setStore: SetStore) {
   clearTimeout(timer);
   timer = setTimeout(() => {
     // 等 load、lcp 事件触发后并且 DOM 树不再变化时，计算首屏渲染时间
     if (isOnLoaded && isLCPDone()) {
-      observer && observer.disconnect();
-      let data: PerformanceReportData = {
-        type: MonitorType.PERFORMANCE,
-        secondType: PerformanceType[entryType],
-        time: getNowTime(),
-        value: getRenderTime(),
-      };
-      store.set(PerformanceType[entryType], data);
+      setStore(PerformanceType.FSP, getRenderTime());
       entries = null;
     } else {
-      checkDOMChange(store);
+      checkDOMChange(setStore);
     }
   }, 500);
 }
@@ -93,23 +71,7 @@ function needToCalculate(node) {
   return true;
 }
 
-const viewportWidth = window.innerWidth;
-const viewportHeight = window.innerHeight;
-
-// dom 对象是否在屏幕内
-function isInScreen(dom) {
-  const rectInfo = dom.getBoundingClientRect();
-  if (
-    rectInfo.left >= 0 &&
-    rectInfo.left < viewportWidth &&
-    rectInfo.top >= 0 &&
-    rectInfo.top < viewportHeight
-  ) {
-    return true;
-  }
-}
-
-export function getFSP(store: InstanceType<typeof Store>) {
+export function getFSP(setStore: SetStore) {
   if (!MutationObserver) {
     throw new Error('浏览器不支持MutationObserver');
   }
@@ -119,7 +81,7 @@ export function getFSP(store: InstanceType<typeof Store>) {
     : setTimeout;
   const ignoreDOMList = ['STYLE', 'SCRIPT', 'LINK', 'META'];
   const ob = new MutationObserver((mutationList) => {
-    checkDOMChange(store);
+    checkDOMChange(setStore);
     next(() => {
       entry.startTime = performance.now();
     });

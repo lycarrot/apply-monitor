@@ -6,6 +6,7 @@ import { getFSP } from './getFSP';
 import { getNavTiming } from './getNavTiming';
 import { getMemory } from './getMemory';
 import { getNavConnection } from './getNavConnection';
+import { getDevices } from './getDevices';
 import { Store, ReportInfo } from '../../common';
 import { onLoaded, onHidden, beforeUnload, getNowTime } from '../../utils';
 import {
@@ -13,6 +14,8 @@ import {
   PerformanceReportData,
   MonitorType,
   Level,
+  PerformanceType,
+  ReportValue,
 } from '../../types';
 
 class Performance {
@@ -24,14 +27,16 @@ class Performance {
     this.init();
   }
   init() {
-    getFP(this.newStore);
-    getLCP(this.newStore);
-    getCLS(this.newStore);
-    getFID(this.newStore);
-    getNavConnection(this.newStore);
-    getNavTiming(this.newStore);
-    getFSP(this.newStore);
-    getMemory(this.newStore);
+    getFP(this.setStore);
+    getLCP(this.setStore);
+    getCLS(this.setStore);
+    getFID(this.setStore);
+    getNavConnection(this.setStore);
+    getNavTiming(this.setStore);
+    getFSP(this.setStore);
+    getMemory(this.setStore);
+    getDevices(this.setStore);
+
     this.report();
   }
   report() {
@@ -45,9 +50,9 @@ class Performance {
       });
     });
   }
-  setStore(type: MonitorType, secondType: string, value) {
+  setStore(secondType: PerformanceType, value: ReportValue) {
     let data: PerformanceReportData = {
-      type: type,
+      type: MonitorType.PERFORMANCE,
       secondType: secondType,
       level: Level.INFO,
       time: getNowTime(),

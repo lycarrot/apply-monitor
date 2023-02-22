@@ -1,17 +1,21 @@
-import { BaseReportData, ObjAnyAttr } from './common';
+import { BaseReportData, ObjAnyAttr, MonitorType } from './common';
 export enum PerformanceType {
-  'first-paint' = 'FP',
-  'first-contentful-paint' = 'FCP',
-  'largest-contentful-paint' = 'LCP',
-  'layout-shift' = 'CLS',
-  'first-input' = 'FID',
-  'nav-connecttion' = 'NC',
-  'navigation' = 'Navigation',
-  'memory' = 'Memory',
+  FP = 'first-paint',
+  FCP = 'first-contentful-paint',
+  LCP = 'largest-contentful-paint',
+  CLS = 'layout-shift',
+  FID = 'first-input',
+  FSP = 'first-screen-paint',
+  NC = 'nav-connecttion',
+  NAV = 'navigation',
+  MRY = 'memory',
+  DICE = 'devices',
 }
 
+export type ReportValue = string | number | ObjAnyAttr;
+
 export interface PerformanceReportData extends BaseReportData {
-  value?: string | number | ObjAnyAttr;
+  value?: ReportValue;
   //FID
   event?: string;
 }
@@ -23,4 +27,38 @@ export interface StoreData {
 export interface LayoutShift extends PerformanceEntry {
   value: number;
   hadRecentInput: boolean;
+}
+
+export type SetStore = {
+  (secondType: PerformanceType, value: ReportValue): void;
+};
+
+export interface NodeItem extends Node {
+  tagName?: string;
+}
+
+export interface SourceItem extends PerformanceEntry {
+  initiatorType?: string;
+  fetchStart?: number;
+  responseEnd?: number;
+}
+
+export interface NavConnection {
+  downlink?: number;
+  effectiveType?: string;
+  rtt?: number;
+}
+
+export interface DevicesInfo {
+  host: string;
+  hostname: string;
+  href: string;
+  protocol: string;
+  origin: string;
+  port: string;
+  pathname: string;
+  search: string;
+  hash: string;
+  userAgent?: string;
+  screenResolution: string;
 }
