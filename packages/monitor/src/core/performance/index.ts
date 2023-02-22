@@ -7,8 +7,13 @@ import { getNavTiming } from './getNavTiming';
 import { getMemory } from './getMemory';
 import { getNavConnection } from './getNavConnection';
 import { Store, ReportInfo } from '../../common';
-import { onLoaded, onHidden, beforeUnload } from '../../utils';
-import { InitOptions } from '../../types';
+import { onLoaded, onHidden, beforeUnload, getNowTime } from '../../utils';
+import {
+  InitOptions,
+  PerformanceReportData,
+  MonitorType,
+  Level,
+} from '../../types';
 
 class Performance {
   newStore: InstanceType<typeof Store>;
@@ -39,6 +44,16 @@ class Performance {
         this.newStore.clear();
       });
     });
+  }
+  setStore(type: MonitorType, secondType: string, value) {
+    let data: PerformanceReportData = {
+      type: type,
+      secondType: secondType,
+      level: Level.INFO,
+      time: getNowTime(),
+      value: value,
+    };
+    this.newStore.set(secondType, data);
   }
 }
 

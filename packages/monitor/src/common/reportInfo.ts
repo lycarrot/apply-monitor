@@ -4,14 +4,14 @@ import { Queue } from './queue';
 class ReportInfo {
   queue: Queue;
   url: string;
-  senday: string;
+  sendWay: string;
   constructor(options: InitOptions) {
     this.url = options.url;
-    this.senday = options.sendWay;
+    this.sendWay = options.sendWay;
     this.queue = new Queue();
   }
   send(data: ErrorReportData): void {
-    this.senday == 'img' ? this.useImg(data) : this.useAjax(data);
+    this.sendWay == 'img' ? this.useImg(data) : this.useAjax(data);
   }
   useImg(data: ErrorReportData): void {
     const fn = () => {

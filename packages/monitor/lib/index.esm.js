@@ -146,11 +146,11 @@ var Queue = /** @class */ (function () {
 var ReportInfo = /** @class */ (function () {
     function ReportInfo(options) {
         this.url = options.url;
-        this.senday = options.sendWay;
+        this.sendWay = options.sendWay;
         this.queue = new Queue();
     }
     ReportInfo.prototype.send = function (data) {
-        this.senday == 'img' ? this.useImg(data) : this.useAjax(data);
+        this.sendWay == 'img' ? this.useImg(data) : this.useAjax(data);
     };
     ReportInfo.prototype.useImg = function (data) {
         var _this = this;
@@ -442,6 +442,10 @@ function getFP(store) {
     }
 }
 
+var lcpDone = false;
+function isLCPDone() {
+    return lcpDone;
+}
 function setPerformanceData$2(store, entry) {
     if (entry.entryType) {
         var data = {
@@ -455,10 +459,12 @@ function setPerformanceData$2(store, entry) {
 }
 function getLCP(store) {
     if (!isPerformanceObserver()) {
+        lcpDone = true;
         throw new Error('浏览器不支持PerformanceObserver');
     }
     else {
         var entryHandler = function (entry) {
+            lcpDone = true;
             if (ob_1) {
                 ob_1.disconnect();
             }
@@ -530,6 +536,88 @@ function getFID(store) {
     }
 }
 
+var entries = [];
+var entryType$1 = 'first-screen-paint';
+var isOnLoaded = false;
+onLoaded(function () {
+    isOnLoaded = true;
+});
+var timer;
+function checkDOMChange(store) {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+        // 等 load、lcp 事件触发后并且 DOM 树不再变化时，计算首屏渲染时间
+        if (isOnLoaded && isLCPDone()) {
+            var data = {
+                type: MonitorType.PERFORMANCE,
+                secondType: PerformanceType[entryType$1],
+                time: getNowTime(),
+                value: getRenderTime(),
+            };
+            store.set(PerformanceType[entryType$1], data);
+            entries = null;
+        }
+        else {
+            checkDOMChange(store);
+        }
+    }, 500);
+}
+function getRenderTime() {
+    var startTime = 0;
+    entries.forEach(function (entry) {
+        var e_1, _a;
+        try {
+            for (var _b = __values(entry.children), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var node = _c.value;
+                if (isInScreen(node) &&
+                    entry.startTime > startTime &&
+                    needToCalculate(node)) {
+                    startTime = entry.startTime;
+                    break;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    });
+    // 需要和当前页面所有加载图片的时间做对比，取最大值
+    // 图片请求时间要小于 startTime，响应结束时间要大于 startTime
+    performance.getEntriesByType('resource').forEach(function (item) {
+        if (item.initiatorType === 'img' &&
+            item.fetchStart < startTime &&
+            item.responseEnd > startTime) {
+            startTime = item.responseEnd;
+        }
+    });
+    return startTime;
+}
+function needToCalculate(node) {
+    // 隐藏的元素不用计算
+    if (window.getComputedStyle(node).display === 'none')
+        return false;
+    // 用于统计的图片不用计算
+    if (node.tagName === 'IMG' && node.width < 2 && node.height < 2) {
+        return false;
+    }
+    return true;
+}
+var viewportWidth = window.innerWidth;
+var viewportHeight = window.innerHeight;
+// dom 对象是否在屏幕内
+function isInScreen(dom) {
+    var rectInfo = dom.getBoundingClientRect();
+    if (rectInfo.left >= 0 &&
+        rectInfo.left < viewportWidth &&
+        rectInfo.top >= 0 &&
+        rectInfo.top < viewportHeight) {
+        return true;
+    }
+}
 function getFSP(store) {
     if (!MutationObserver) {
         throw new Error('浏览器不支持MutationObserver');
@@ -539,7 +627,8 @@ function getFSP(store) {
         : setTimeout;
     var ignoreDOMList = ['STYLE', 'SCRIPT', 'LINK', 'META'];
     var ob = new MutationObserver(function (mutationList) {
-        var e_1, _a, e_2, _b;
+        var e_2, _a, e_3, _b;
+        checkDOMChange(store);
         next(function () {
             entry.startTime = performance.now();
         });
@@ -553,7 +642,7 @@ function getFSP(store) {
                 if (mutation.addedNodes.length) {
                     var nodeLists = Array.from(mutation.addedNodes);
                     try {
-                        for (var nodeLists_1 = (e_2 = void 0, __values(nodeLists)), nodeLists_1_1 = nodeLists_1.next(); !nodeLists_1_1.done; nodeLists_1_1 = nodeLists_1.next()) {
+                        for (var nodeLists_1 = (e_3 = void 0, __values(nodeLists)), nodeLists_1_1 = nodeLists_1.next(); !nodeLists_1_1.done; nodeLists_1_1 = nodeLists_1.next()) {
                             var node = nodeLists_1_1.value;
                             if (node.nodeType === 1 &&
                                 !ignoreDOMList.includes(node === null || node === void 0 ? void 0 : node.tagName) &&
@@ -562,24 +651,26 @@ function getFSP(store) {
                             }
                         }
                     }
-                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
                     finally {
                         try {
                             if (nodeLists_1_1 && !nodeLists_1_1.done && (_b = nodeLists_1.return)) _b.call(nodeLists_1);
                         }
-                        finally { if (e_2) throw e_2.error; }
+                        finally { if (e_3) throw e_3.error; }
                     }
                 }
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (mutationList_1_1 && !mutationList_1_1.done && (_a = mutationList_1.return)) _a.call(mutationList_1);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
-        if (entry.children.length) ;
+        if (entry.children.length) {
+            entries.push(entry);
+        }
     });
     ob.observe(document, {
         childList: true,
@@ -733,6 +824,16 @@ var Performance = /** @class */ (function () {
             });
         });
     };
+    Performance.prototype.setStore = function (type, secondType, value) {
+        var data = {
+            type: type,
+            secondType: secondType,
+            level: Level.INFO,
+            time: getNowTime(),
+            value: value,
+        };
+        this.newStore.set(secondType, data);
+    };
     return Performance;
 }());
 
@@ -750,7 +851,7 @@ var Monitor = /** @class */ (function () {
             return;
         }
         if (options.isVue && !options.vue) {
-            console.log('如果选择监控的是Vue程序,请在vue字段上传入Vue');
+            console.log('如果isVue为true时,请在vue字段上传入Vue');
             return;
         }
         this.setDefault(options);

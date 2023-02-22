@@ -1,9 +1,4 @@
-import {
-  isPerformanceObserver,
-  isPerformance,
-  getNowTime,
-  onLoaded,
-} from '../../utils';
+import { getNowTime, onLoaded, isIncludeEle } from '../../utils';
 import { Store } from '../../common';
 import {
   PerformanceType,
@@ -14,6 +9,12 @@ import { isLCPDone } from './getLCP';
 
 interface NodeItem extends Node {
   tagName?: string;
+}
+
+interface SourceItem extends PerformanceEntry {
+  initiatorType?: string;
+  fetchStart?: number;
+  responseEnd?: number;
 }
 
 let entries: {
@@ -67,7 +68,7 @@ function getRenderTime() {
 
   // 需要和当前页面所有加载图片的时间做对比，取最大值
   // 图片请求时间要小于 startTime，响应结束时间要大于 startTime
-  performance.getEntriesByType('resource').forEach((item: PerformanceEntry) => {
+  performance.getEntriesByType('resource').forEach((item: SourceItem) => {
     if (
       item.initiatorType === 'img' &&
       item.fetchStart < startTime &&

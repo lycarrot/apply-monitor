@@ -4,7 +4,6 @@ import {
   PerformanceType,
 } from '../../types';
 import { getNowTime } from '../../utils';
-import { Store } from '../../common';
 
 type WindowInfo = {
   host: string;
@@ -25,7 +24,6 @@ export function getPageInfo(store: InstanceType<typeof Store>) {
   if (!window.location) {
     throw new Error('浏览器不支持location');
     return;
-  }
 
   const {
     host,

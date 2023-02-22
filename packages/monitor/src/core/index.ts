@@ -2,6 +2,7 @@ import { InitOptions } from '../types';
 import { defaultOptions } from '../config';
 import initError from './error';
 import initPerformance from './performance';
+
 class Monitor {
   constructor(options: InitOptions) {
     this.init(options);
@@ -16,7 +17,7 @@ class Monitor {
       return;
     }
     if (options.isVue && !options.vue) {
-      console.log('如果选择监控的是Vue程序,请在vue字段上传入Vue');
+      console.log('如果isVue为true时,请在vue字段上传入Vue');
       return;
     }
     this.setDefault(options);
@@ -24,7 +25,7 @@ class Monitor {
     new initPerformance(options);
   }
   setDefault(options: InitOptions) {
-    Object.keys(defaultOptions).forEach((key) => {
+    Object.keys(defaultOptions).forEach((key: string) => {
       if (!options[key]) {
         options[key] = defaultOptions[key];
       }

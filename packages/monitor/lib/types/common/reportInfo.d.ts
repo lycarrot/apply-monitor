@@ -3,7 +3,7 @@ import { Queue } from './queue';
 declare class ReportInfo {
     queue: Queue;
     url: string;
-    senday: string;
+    sendWay: string;
     constructor(options: InitOptions);
     send(data: ErrorReportData): void;
     useImg(data: ErrorReportData): void;
