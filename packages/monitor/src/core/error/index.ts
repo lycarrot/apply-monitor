@@ -7,15 +7,13 @@ import {
   Level,
   VueInstance,
   ViewModel,
+  RejectReason,
+  ReportValue,
 } from '../../types';
 import { ReportInfo } from '../../common';
 import { getLines, getNowTime } from '../../utils';
 
-type RejectReason = {
-  message: string;
-  stack: string;
-};
-class InitError {
+class Error {
   reportInfo: ReportInfo;
   constructor(options: InitOptions) {
     this.init(options);
@@ -30,6 +28,15 @@ class InitError {
       this.handleAajxError();
     }
   }
+  report(secondType: ErrorType, value: ReportValue) {
+    this.reportInfo.send({
+      type: MonitorType.ERROR,
+      secondType: secondType,
+      level: Level.ERROR,
+      time: getNowTime(),
+      value: value,
+    });
+  }
   // js错误监控
   handleJS() {
     window.addEventListener(
@@ -37,22 +44,14 @@ class InitError {
       (event: ErrorEvent) => {
         let target = event.target as JsEventTarget;
         if (target && (target.src || target.href)) {
-          this.reportInfo.send({
-            type: MonitorType.ERROR,
-            secondType: ErrorType.JS,
-            level: Level.ERROR,
-            time: getNowTime(),
+          this.report(ErrorType.JS, {
             message: '资源加载异常了',
             filename: target.src || target.href,
             tagName: target.tagName,
           });
         } else {
           let { message, filename, lineno, colno } = event;
-          this.reportInfo.send({
-            type: MonitorType.ERROR,
-            secondType: ErrorType.JS,
-            level: Level.ERROR,
-            time: getNowTime(),
+          this.report(ErrorType.JS, {
             message: message,
             filename: filename,
             position: `${lineno}:${colno}`,
@@ -62,6 +61,7 @@ class InitError {
       },
       true
     );
+
     window.addEventListener(
       'unhandledrejection',
       (event: PromiseRejectionEvent) => {
@@ -71,7 +71,6 @@ class InitError {
         let column: number | string = 0;
         let stack: string = '';
         let reason: string | RejectReason = event.reason;
-        debugger;
         if (typeof reason === 'string') {
           message = reason;
         } else if (typeof reason === 'object') {
@@ -84,11 +83,7 @@ class InitError {
           }
           stack = getLines(reason.stack);
         }
-        this.reportInfo.send({
-          type: MonitorType.ERROR,
-          secondType: ErrorType.PROMISE,
-          level: Level.WARN,
-          time: getNowTime(),
+        this.report(ErrorType.PROMISE, {
           message,
           filename,
           position: `${line}:${column}`,
@@ -98,7 +93,7 @@ class InitError {
       true
     );
   }
-  //vue错误监控
+  // vue错误监控;
   handleVue(Vue: VueInstance) {
     Vue.config.errorHandler = (error: Error, vm: ViewModel, info: string) => {
       let componentName: string;
@@ -107,11 +102,7 @@ class InitError {
           ? vm.$options.name || vm.$options._componentTag
           : vm.name;
       }
-      this.reportInfo.send({
-        type: MonitorType.ERROR,
-        secondType: ErrorType.VUE,
-        level: Level.ERROR,
-        time: getNowTime(),
+      this.report(ErrorType.VUE, {
         message: error.message,
         info: info,
         componentName: componentName,
@@ -147,11 +138,7 @@ class InitError {
         if (!event) return;
         let target = event.currentTarget as AjaxEventTarget;
         if (target && target.status !== 200) {
-          this.reportInfo.send({
-            type: MonitorType.ERROR,
-            secondType: ErrorType.AJAX,
-            level: Level.ERROR,
-            time: getNowTime(),
+          this.report(ErrorType.AJAX, {
             message: target.response,
             status: target.status,
             statusText: target.statusText,
@@ -165,4 +152,4 @@ class InitError {
   }
 }
 
-export default InitError;
+export default Error;

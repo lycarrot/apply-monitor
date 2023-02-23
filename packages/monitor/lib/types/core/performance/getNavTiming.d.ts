@@ -1,2 +1,2 @@
-import { Store } from '../../common';
-export declare function getNavTiming(store: InstanceType<typeof Store>): void;
+import { SetStore } from '../../types';
+export declare function getNavTiming(setStore: SetStore): void;

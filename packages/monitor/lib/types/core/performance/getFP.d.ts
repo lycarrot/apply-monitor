@@ -1,2 +1,2 @@
-import { Store } from '../../common';
-export declare function getFP(store: InstanceType<typeof Store>): void;
+import { SetStore } from '../../types';
+export declare function getFP(setStore: SetStore): void;

@@ -1,3 +1,6 @@
+export function onBeforeunload(callback): void {
+  window.addEventListener('beforeunload', callback, true);
+}
 // 页面加载完成
 export const onLoaded = (callback): void => {
   if (document.readyState === 'complete') {

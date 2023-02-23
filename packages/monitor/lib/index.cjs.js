@@ -9,6 +9,7 @@ var MonitorType;
 (function (MonitorType) {
     MonitorType["ERROR"] = "error";
     MonitorType["PERFORMANCE"] = "performance";
+    MonitorType["BEHAVIOR"] = "behavior";
 })(MonitorType || (MonitorType = {}));
 var Level;
 (function (Level) {
@@ -28,15 +29,24 @@ var ErrorType;
 
 var PerformanceType;
 (function (PerformanceType) {
-    PerformanceType["first-paint"] = "FP";
-    PerformanceType["first-contentful-paint"] = "FCP";
-    PerformanceType["largest-contentful-paint"] = "LCP";
-    PerformanceType["layout-shift"] = "CLS";
-    PerformanceType["first-input"] = "FID";
-    PerformanceType["nav-connecttion"] = "NC";
-    PerformanceType["navigation"] = "Navigation";
-    PerformanceType["memory"] = "Memory";
+    PerformanceType["FP"] = "first-paint";
+    PerformanceType["FCP"] = "first-contentful-paint";
+    PerformanceType["LCP"] = "largest-contentful-paint";
+    PerformanceType["CLS"] = "layout-shift";
+    PerformanceType["FID"] = "first-input";
+    PerformanceType["FSP"] = "first-screen-paint";
+    PerformanceType["NC"] = "nav-connecttion";
+    PerformanceType["NAV"] = "navigation";
+    PerformanceType["MRY"] = "memory";
+    PerformanceType["DICE"] = "devices";
 })(PerformanceType || (PerformanceType = {}));
+
+var BehaviorType;
+(function (BehaviorType) {
+    BehaviorType["PV"] = "pv";
+    BehaviorType["VJ"] = "vue-jump";
+    BehaviorType["PD"] = "page-duration";
+})(BehaviorType || (BehaviorType = {}));
 
 function formatParams(obj) {
     var strArr = [];
@@ -61,15 +71,6 @@ var switchToMB = function (bytes) {
     }
     return parseFloat((bytes / Math.pow(1024, 2)).toFixed(2));
 };
-var isIncludeEle = function (node, arr) {
-    if (!node || node === document.documentElement) {
-        return false;
-    }
-    if (arr.includes(node)) {
-        return true;
-    }
-    return isIncludeEle(node.parentElement, arr);
-};
 
 var isPerformance = function () {
     return (!!window.performance &&
@@ -81,6 +82,27 @@ var isPerformanceObserver = function () {
 };
 var isNavigator = function () {
     return !!window.navigator;
+};
+// dom 对象是否在屏幕内
+var isInScreen = function (dom) {
+    var viewportWidth = window.innerWidth;
+    var viewportHeight = window.innerHeight;
+    var rectInfo = dom.getBoundingClientRect();
+    if (rectInfo.left >= 0 &&
+        rectInfo.left < viewportWidth &&
+        rectInfo.top >= 0 &&
+        rectInfo.top < viewportHeight) {
+        return true;
+    }
+};
+var isIncludeEle = function (node, arr) {
+    if (!node || node === document.documentElement) {
+        return false;
+    }
+    if (arr.includes(node)) {
+        return true;
+    }
+    return isIncludeEle(node.parentElement, arr);
 };
 
 // 页面加载完成
@@ -255,12 +277,12 @@ function observe(type, handler) {
     }
 }
 
-var InitError = /** @class */ (function () {
-    function InitError(options) {
+var Error$1 = /** @class */ (function () {
+    function Error(options) {
         this.init(options);
         this.reportInfo = new ReportInfo(options);
     }
-    InitError.prototype.init = function (options) {
+    Error.prototype.init = function (options) {
         this.handleJS();
         if (options.isVue) {
             this.handleVue(options.vue);
@@ -269,17 +291,22 @@ var InitError = /** @class */ (function () {
             this.handleAajxError();
         }
     };
+    Error.prototype.report = function (secondType, value) {
+        this.reportInfo.send({
+            type: MonitorType.ERROR,
+            secondType: secondType,
+            level: Level.ERROR,
+            time: getNowTime(),
+            value: value,
+        });
+    };
     // js错误监控
-    InitError.prototype.handleJS = function () {
+    Error.prototype.handleJS = function () {
         var _this = this;
         window.addEventListener('error', function (event) {
             var target = event.target;
             if (target && (target.src || target.href)) {
-                _this.reportInfo.send({
-                    type: MonitorType.ERROR,
-                    secondType: ErrorType.JS,
-                    level: Level.ERROR,
-                    time: getNowTime(),
+                _this.report(ErrorType.JS, {
                     message: '资源加载异常了',
                     filename: target.src || target.href,
                     tagName: target.tagName,
@@ -287,11 +314,7 @@ var InitError = /** @class */ (function () {
             }
             else {
                 var message = event.message, filename = event.filename, lineno = event.lineno, colno = event.colno;
-                _this.reportInfo.send({
-                    type: MonitorType.ERROR,
-                    secondType: ErrorType.JS,
-                    level: Level.ERROR,
-                    time: getNowTime(),
+                _this.report(ErrorType.JS, {
                     message: message,
                     filename: filename,
                     position: "".concat(lineno, ":").concat(colno),
@@ -306,7 +329,6 @@ var InitError = /** @class */ (function () {
             var column = 0;
             var stack = '';
             var reason = event.reason;
-            debugger;
             if (typeof reason === 'string') {
                 message = reason;
             }
@@ -320,11 +342,7 @@ var InitError = /** @class */ (function () {
                 }
                 stack = getLines(reason.stack);
             }
-            _this.reportInfo.send({
-                type: MonitorType.ERROR,
-                secondType: ErrorType.PROMISE,
-                level: Level.WARN,
-                time: getNowTime(),
+            _this.report(ErrorType.PROMISE, {
                 message: message,
                 filename: filename,
                 position: "".concat(line, ":").concat(column),
@@ -332,8 +350,8 @@ var InitError = /** @class */ (function () {
             });
         }, true);
     };
-    //vue错误监控
-    InitError.prototype.handleVue = function (Vue) {
+    // vue错误监控;
+    Error.prototype.handleVue = function (Vue) {
         var _this = this;
         Vue.config.errorHandler = function (error, vm, info) {
             var componentName;
@@ -342,11 +360,7 @@ var InitError = /** @class */ (function () {
                     ? vm.$options.name || vm.$options._componentTag
                     : vm.name;
             }
-            _this.reportInfo.send({
-                type: MonitorType.ERROR,
-                secondType: ErrorType.VUE,
-                level: Level.ERROR,
-                time: getNowTime(),
+            _this.report(ErrorType.VUE, {
                 message: error.message,
                 info: info,
                 componentName: componentName,
@@ -355,7 +369,7 @@ var InitError = /** @class */ (function () {
         };
     };
     //ajax请求错误
-    InitError.prototype.handleAajxError = function () {
+    Error.prototype.handleAajxError = function () {
         var _this = this;
         if (!window.XMLHttpRequest) {
             return;
@@ -384,11 +398,7 @@ var InitError = /** @class */ (function () {
                     return;
                 var target = event.currentTarget;
                 if (target && target.status !== 200) {
-                    _this.reportInfo.send({
-                        type: MonitorType.ERROR,
-                        secondType: ErrorType.AJAX,
-                        level: Level.ERROR,
-                        time: getNowTime(),
+                    _this.report(ErrorType.AJAX, {
                         message: target.response,
                         status: target.status,
                         statusText: target.statusText,
@@ -401,34 +411,25 @@ var InitError = /** @class */ (function () {
             }
         };
     };
-    return InitError;
+    return Error;
 }());
 
-function setPerformanceData$3(store, entry) {
-    if (entry.name) {
-        var data = {
-            type: MonitorType.PERFORMANCE,
-            secondType: PerformanceType[entry.name],
-            time: getNowTime(),
-            value: entry.startTime.toFixed(2),
-        };
-        store.set(PerformanceType[entry.name], data);
-    }
+// first-paint  从页面加载开始到第一个像素绘制到屏幕上的时间
+//  first-contentful-paint 从页面加载开始到页面内容的任何部分在屏幕上完成渲染的时间
+function getEntriesByFP(setStore) {
+    var entryFP = performance.getEntriesByName('first-paint')[0];
+    var entryFCP = performance.getEntriesByName('first-contentful-paint')[0];
+    setStore(PerformanceType.FP, entryFP.startTime.toFixed(2));
+    setStore(PerformanceType.FCP, entryFCP.startTime.toFixed(2));
 }
-function getEntriesByFP(store) {
-    var FP = performance.getEntriesByName('first-paint')[0];
-    var FCP = performance.getEntriesByName('first-contentful-paint')[0];
-    setPerformanceData$3(store, FP);
-    setPerformanceData$3(store, FCP);
-}
-function getFP(store) {
+function getFP(setStore) {
     if (!isPerformanceObserver()) {
         if (!isPerformance()) {
             throw new Error('浏览器不支持performance');
         }
         else {
             onLoaded(function () {
-                getEntriesByFP(store);
+                getEntriesByFP(setStore);
             });
         }
     }
@@ -437,29 +438,18 @@ function getFP(store) {
             if (ob_1) {
                 ob_1.disconnect();
             }
-            setPerformanceData$3(store, entry);
+            setStore(PerformanceType.FP, entry.startTime.toFixed(2));
         };
-        // first-paint first-contentful-paint
         var ob_1 = observe('paint', entryHandler);
     }
 }
 
+// largest-contentful-paint 从页面加载开始到最大文本块或图像元素在屏幕上完成渲染的时间
 var lcpDone = false;
 function isLCPDone() {
     return lcpDone;
 }
-function setPerformanceData$2(store, entry) {
-    if (entry.entryType) {
-        var data = {
-            type: MonitorType.PERFORMANCE,
-            secondType: PerformanceType[entry.entryType],
-            time: getNowTime(),
-            value: entry.startTime.toFixed(2),
-        };
-        store.set(PerformanceType[entry.entryType], data);
-    }
-}
-function getLCP(store) {
+function getLCP(setStore) {
     if (!isPerformanceObserver()) {
         lcpDone = true;
         throw new Error('浏览器不支持PerformanceObserver');
@@ -470,16 +460,15 @@ function getLCP(store) {
             if (ob_1) {
                 ob_1.disconnect();
             }
-            setPerformanceData$2(store, entry);
+            setStore(PerformanceType.LCP, entry.startTime.toFixed(2));
         };
-        // largest-contentful-paint
         var ob_1 = observe('largest-contentful-paint', entryHandler);
     }
 }
 
+// layout-shift 从页面加载开始和其生命周期状态变为隐藏期间发生的所有意外布局偏移的累积分数
 var value = 0;
-var typeName = 'layout-shift';
-function getCLS(store) {
+function getCLS(setStore) {
     if (!isPerformanceObserver()) {
         throw new Error('浏览器不支持PerformanceObserver');
     }
@@ -489,7 +478,7 @@ function getCLS(store) {
                 value += entry.value;
             }
         };
-        var ob_1 = observe(typeName, entryHandler);
+        var ob_1 = observe(PerformanceType.CLS, entryHandler);
         var stopListening = function () {
             if (ob_1 === null || ob_1 === void 0 ? void 0 : ob_1.takeRecords) {
                 ob_1.takeRecords().map(function (entry) {
@@ -499,31 +488,14 @@ function getCLS(store) {
                 });
             }
             ob_1 === null || ob_1 === void 0 ? void 0 : ob_1.disconnect();
-            var data = {
-                type: MonitorType.PERFORMANCE,
-                secondType: PerformanceType[typeName],
-                time: getNowTime(),
-                value: value.toFixed(2),
-            };
-            store.set(PerformanceType[typeName], data);
+            setStore(PerformanceType.CLS, value.toFixed(2));
         };
         onHidden(stopListening, true);
     }
 }
 
-function setPerformanceData$1(store, entry) {
-    if (entry.entryType) {
-        var data = {
-            type: MonitorType.PERFORMANCE,
-            secondType: PerformanceType[entry.entryType],
-            time: getNowTime(),
-            value: entry.startTime.toFixed(2),
-            event: entry.name,
-        };
-        store.set(PerformanceType[entry.entryType], data);
-    }
-}
-function getFID(store) {
+// first-input 测量用户首次与您的站点交互时的时间（即，当他们单击链接，点击按钮或使用自定义的JavaScript驱动控件时）到浏览器实际能够的时间回应这种互动。
+function getFID(setStore) {
     if (!isPerformanceObserver()) {
         throw new Error('浏览器不支持PerformanceObserver');
     }
@@ -532,35 +504,32 @@ function getFID(store) {
             if (ob_1) {
                 ob_1.disconnect();
             }
-            setPerformanceData$1(store, entry);
+            setStore(PerformanceType.FID, {
+                value: entry.startTime.toFixed(2),
+                event: entry.name,
+            });
         };
-        var ob_1 = observe('first-input', entryHandler);
+        var ob_1 = observe(PerformanceType.FID, entryHandler);
     }
 }
 
+//first-screen-paint 首屏渲染时间
 var entries = [];
-var entryType$1 = 'first-screen-paint';
 var isOnLoaded = false;
 onLoaded(function () {
     isOnLoaded = true;
 });
 var timer;
-function checkDOMChange(store) {
+function checkDOMChange(setStore) {
     clearTimeout(timer);
     timer = setTimeout(function () {
         // 等 load、lcp 事件触发后并且 DOM 树不再变化时，计算首屏渲染时间
         if (isOnLoaded && isLCPDone()) {
-            var data = {
-                type: MonitorType.PERFORMANCE,
-                secondType: PerformanceType[entryType$1],
-                time: getNowTime(),
-                value: getRenderTime(),
-            };
-            store.set(PerformanceType[entryType$1], data);
+            setStore(PerformanceType.FSP, getRenderTime());
             entries = null;
         }
         else {
-            checkDOMChange(store);
+            checkDOMChange(setStore);
         }
     }, 500);
 }
@@ -608,19 +577,7 @@ function needToCalculate(node) {
     }
     return true;
 }
-var viewportWidth = window.innerWidth;
-var viewportHeight = window.innerHeight;
-// dom 对象是否在屏幕内
-function isInScreen(dom) {
-    var rectInfo = dom.getBoundingClientRect();
-    if (rectInfo.left >= 0 &&
-        rectInfo.left < viewportWidth &&
-        rectInfo.top >= 0 &&
-        rectInfo.top < viewportHeight) {
-        return true;
-    }
-}
-function getFSP(store) {
+function getFSP(setStore) {
     if (!MutationObserver) {
         throw new Error('浏览器不支持MutationObserver');
     }
@@ -630,7 +587,7 @@ function getFSP(store) {
     var ignoreDOMList = ['STYLE', 'SCRIPT', 'LINK', 'META'];
     var ob = new MutationObserver(function (mutationList) {
         var e_2, _a, e_3, _b;
-        checkDOMChange(store);
+        checkDOMChange(setStore);
         next(function () {
             entry.startTime = performance.now();
         });
@@ -680,8 +637,8 @@ function getFSP(store) {
     });
 }
 
-var entryType = 'navigation';
-function setPerformanceData(store, entry) {
+// navigation 可以获取到用户访问一个页面的每个阶段的精确时间
+function setPerformanceData(setStore, entry) {
     var domainLookupStart = entry.domainLookupStart, domainLookupEnd = entry.domainLookupEnd, connectStart = entry.connectStart, connectEnd = entry.connectEnd, secureConnectionStart = entry.secureConnectionStart, requestStart = entry.requestStart, responseStart = entry.responseStart, responseEnd = entry.responseEnd, domInteractive = entry.domInteractive, domContentLoadedEventStart = entry.domContentLoadedEventStart, domContentLoadedEventEnd = entry.domContentLoadedEventEnd, loadEventStart = entry.loadEventStart, fetchStart = entry.fetchStart;
     var timing = {
         // DNS解析时间
@@ -707,13 +664,7 @@ function setPerformanceData(store, entry) {
         // DOM阶段渲染耗时
         domReady: (domContentLoadedEventEnd - fetchStart).toFixed(2),
     };
-    var data = {
-        type: MonitorType.PERFORMANCE,
-        secondType: PerformanceType[entryType],
-        time: getNowTime(),
-        value: timing,
-    };
-    store.set(PerformanceType[entryType], data);
+    setStore(PerformanceType.NAV, timing);
 }
 function getPerformanceentryTim() {
     var entryTim = (performance.getEntriesByType('navigation').length > 0
@@ -721,14 +672,14 @@ function getPerformanceentryTim() {
         : performance.timing);
     return entryTim;
 }
-function getNavTiming(store) {
+function getNavTiming(setStore) {
     if (!isPerformanceObserver()) {
         if (!isPerformance()) {
             throw new Error('浏览器不支持performance');
         }
         else {
             onLoaded(function () {
-                setPerformanceData(store, getPerformanceentryTim());
+                setPerformanceData(setStore, getPerformanceentryTim());
             });
         }
     }
@@ -737,14 +688,14 @@ function getNavTiming(store) {
             if (ob_1) {
                 ob_1.disconnect();
             }
-            setPerformanceData(store, entry);
+            setPerformanceData(setStore, entry);
         };
-        var ob_1 = observe(entryType, entryHandler);
+        var ob_1 = observe(PerformanceType.NAV, entryHandler);
     }
 }
 
-var type = 'memory';
-function getMemory(store) {
+// 获取内存占用空间
+function getMemory(setStore) {
     if (!isPerformance()) {
         throw new Error('浏览器不支持Performance');
     }
@@ -767,34 +718,45 @@ function getMemory(store) {
             ? switchToMB(performance['memory']['usedJSHeapSize'])
             : 0,
     };
-    var data = {
-        type: MonitorType.PERFORMANCE,
-        secondType: PerformanceType[type],
-        time: getNowTime(),
-        value: value,
-    };
-    console.log('value', value);
-    store.set(PerformanceType[type], data);
+    setStore(PerformanceType.MRY, value);
 }
 
-function getNavConnection(store) {
+// 获取网络环境信息
+function getNavConnection(setStore) {
     if (!isNavigator()) {
         throw new Error('浏览器不支持Navigator');
     }
     else {
-        var connection = ('connection' in navigator ? navigator['connection'] : {});
-        var data = {
-            type: MonitorType.PERFORMANCE,
-            secondType: PerformanceType['nav-connecttion'],
-            time: getNowTime(),
-            value: {
-                downlink: connection.downlink,
-                effectiveType: connection.effectiveType,
-                rtt: connection.rtt,
-            },
+        var connection = 'connection' in navigator ? navigator['connection'] : {};
+        var value = {
+            downlink: connection.downlink,
+            effectiveType: connection.effectiveType,
+            rtt: connection.rtt,
         };
-        store.set(PerformanceType['nav-connecttion'], data);
+        setStore(PerformanceType.NC, value);
     }
+}
+
+function getDevices(setStore) {
+    if (!window.location) {
+        throw new Error('浏览器不支持location');
+    }
+    var host = location.host, hostname = location.hostname, href = location.href, protocol = location.protocol, origin = location.origin, port = location.port, pathname = location.pathname, search = location.search, hash = location.hash;
+    var _a = window.screen, width = _a.width, height = _a.height;
+    var info = {
+        host: host,
+        hostname: hostname,
+        href: href,
+        protocol: protocol,
+        origin: origin,
+        port: port,
+        pathname: pathname,
+        search: search,
+        hash: hash,
+        userAgent: 'userAgent' in navigator ? navigator.userAgent : '',
+        screenResolution: "".concat(width, "*").concat(height),
+    };
+    setStore(PerformanceType.DICE, info);
 }
 
 var Performance = /** @class */ (function () {
@@ -804,14 +766,15 @@ var Performance = /** @class */ (function () {
         this.init();
     }
     Performance.prototype.init = function () {
-        getFP(this.newStore);
-        getLCP(this.newStore);
-        getCLS(this.newStore);
-        getFID(this.newStore);
-        getNavConnection(this.newStore);
-        getNavTiming(this.newStore);
-        getFSP(this.newStore);
-        getMemory(this.newStore);
+        getFP(this.setStore);
+        getLCP(this.setStore);
+        getCLS(this.setStore);
+        getFID(this.setStore);
+        getNavConnection(this.setStore);
+        getNavTiming(this.setStore);
+        getFSP(this.setStore);
+        getMemory(this.setStore);
+        getDevices(this.setStore);
         this.report();
     };
     Performance.prototype.report = function () {
@@ -826,9 +789,9 @@ var Performance = /** @class */ (function () {
             });
         });
     };
-    Performance.prototype.setStore = function (type, secondType, value) {
+    Performance.prototype.setStore = function (secondType, value) {
         var data = {
-            type: type,
+            type: MonitorType.PERFORMANCE,
             secondType: secondType,
             level: Level.INFO,
             time: getNowTime(),
@@ -857,7 +820,7 @@ var Monitor = /** @class */ (function () {
             return;
         }
         this.setDefault(options);
-        new InitError(options);
+        new Error$1(options);
         new Performance(options);
     };
     Monitor.prototype.setDefault = function (options) {

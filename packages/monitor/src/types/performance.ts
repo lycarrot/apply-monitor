@@ -1,4 +1,4 @@
-import { BaseReportData, ObjAnyAttr, MonitorType } from './common';
+import { BaseReportData, ReportValue } from './common';
 export enum PerformanceType {
   FP = 'first-paint',
   FCP = 'first-contentful-paint',
@@ -12,12 +12,8 @@ export enum PerformanceType {
   DICE = 'devices',
 }
 
-export type ReportValue = string | number | ObjAnyAttr;
-
 export interface PerformanceReportData extends BaseReportData {
   value?: ReportValue;
-  //FID
-  event?: string;
 }
 
 export interface StoreData {
@@ -29,9 +25,9 @@ export interface LayoutShift extends PerformanceEntry {
   hadRecentInput: boolean;
 }
 
-export type SetStore = {
+export interface SetStore {
   (secondType: PerformanceType, value: ReportValue): void;
-};
+}
 
 export interface NodeItem extends Node {
   tagName?: string;

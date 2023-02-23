@@ -1,3 +1,3 @@
-import { Store } from '../../common';
+import { SetStore } from '../../types';
 export declare function isLCPDone(): boolean;
-export declare function getLCP(store: InstanceType<typeof Store>): void;
+export declare function getLCP(setStore: SetStore): void;

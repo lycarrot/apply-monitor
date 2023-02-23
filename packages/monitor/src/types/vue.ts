@@ -9,7 +9,7 @@ export interface VueInstance {
 }
 export interface VueConfiguration {
   silent: boolean;
-  errorHandler(err: Error, vm: ViewModel, info: string): void;
+  errorHandler(error: Error, vm: ViewModel, info: string): void;
   warnHandler(msg: string, vm: ViewModel, trace: string): void;
   ignoredElements: (string | RegExp)[];
   keyCodes: { [key: string]: number | number[] };

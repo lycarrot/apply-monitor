@@ -40,3 +40,7 @@ export const isIncludeEle = function (node, arr) {
 
   return isIncludeEle(node.parentElement, arr);
 };
+
+export const getUrl = (): string => {
+  return window.location.href;
+};

@@ -1,4 +1,4 @@
-import { BaseReportData } from './common';
+import { BaseReportData, ReportValue } from './common';
 export enum ErrorType {
   JS = 'js_error',
   RESOURCE = 'resource_error',
@@ -21,17 +21,10 @@ export interface AjaxEventTarget {
 }
 
 export interface ErrorReportData extends BaseReportData {
-  // js
-  message?: string;
-  filename?: string;
-  tagName?: string;
-  position?: string;
-  stack?: string;
-  // Vue
-  info?: string;
-  componentName?: string;
-  //ajax
-  status?: number;
-  statusText?: string;
-  url?: string;
+  value?: ReportValue;
+}
+
+export interface RejectReason {
+  message: string;
+  stack: string;
 }

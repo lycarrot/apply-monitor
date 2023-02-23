@@ -1,6 +1,7 @@
 export enum MonitorType {
   ERROR = 'error',
   PERFORMANCE = 'performance',
+  BEHAVIOR = 'behavior',
 }
 
 export enum Level {
@@ -19,3 +20,5 @@ export interface BaseReportData {
 export interface ObjAnyAttr {
   [key: string]: any;
 }
+
+export type ReportValue = string | number | ObjAnyAttr;

@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export function formatParams(obj: any): string {
   let strArr = [];
   Object.keys(obj).forEach((key) => {
@@ -23,4 +25,16 @@ export const switchToMB = (bytes: number): number | null => {
     return null;
   }
   return parseFloat((bytes / Math.pow(1024, 2)).toFixed(2));
+};
+
+export const generateId = (): string => {
+  return uuidv4();
+};
+
+export const getUid = () => {
+  let uuid = localStorage.getItem('uuid');
+  if (uuid) return uuid;
+  uuid = generateId();
+  localStorage.setItem('uuid', uuid);
+  return uuid;
 };
