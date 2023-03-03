@@ -3,7 +3,8 @@ class Info {
 
     }
     getCollect(ctx, next){
-
+        ctx.response.status = 200;
+        ctx.body ='43443434'
     }
 }
 

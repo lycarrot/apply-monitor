@@ -19,11 +19,6 @@ export default [
         file: pkg.module,
         format: "es",
       },
-      {
-        file: pkg.browser,
-        name: pkg.name,
-        format: "umd",
-      },
     ],
     plugins: [resolve(), commonjs(), json(), typescript(), eslint()],
   },
