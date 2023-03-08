@@ -1,8 +1,17 @@
 import path from "path";
-type Options = {};
+import fs from "fs";
+import axios from "axios";
+
+interface Options {
+  url: string;
+}
+interface FileLists {
+  name: string;
+  filePath: string;
+}
 class Report {
   options: Options;
-  constructor(options: Options) {
+  constructor(options) {
     this.options = options;
   }
   apply(compiler) {
@@ -11,40 +20,37 @@ class Report {
       "report",
       async (compilation, callback) => {
         const files = this.getFiles(compilation);
-        console.log("778899");
-        return;
-        // try {
-        //   await this.createRelease();
-        //   await this.uploadFiles(files);
-        //   console.info("\n\u001b[32mUpload successfully.\u001b[39m\n");
-        // } catch (error) {
-        //   // todo
-        // }
-        // callback(null);
+        console.log("files", files);
+        debugger;
+        // await this.createRelease();
+        await this.uploadFiles(files);
+        console.info("\n\u001b[32mUpload successfully.\u001b[39m\n");
+        callback(null);
       }
     );
   }
+  request(data) {
+    const instance = axios.create({
+      headers: { "content-type": "multipart/form-data" },
+    });
+    return instance.post(this.options.url, {
+      data: data,
+    });
+  }
   getFiles(compilation) {
     // 通过 compilation.assets 获取我们需要的文件信息，格式信息
-    // compilation.assets {
-    // 'bundle.js': SizeOnlySource { _size: 212 },
-    // 'bundle.js.map': SizeOnlySource { _size: 162 }
-    // }
-    // return Object.keys(compilation.assets)
-    //   .map((name) => {
-    //     if (this.isIncludeOrExclude(name)) {
-    //       return { name, filePath: this.getAssetPath(compilation, name) };
-    //     }
-    //     return null;
-    //   })
-    //   .filter(Boolean);
+    let fileLists: FileLists[] = [];
+    const reg = /\.(js.map|css.map)$/;
+    Object.keys(compilation.assets).forEach((name) => {
+      if (reg.test(name)) {
+        fileLists.push({
+          name,
+          filePath: this.getAssetPath(compilation, name),
+        });
+      }
+    });
+    return fileLists;
   }
-  // isIncludeOrExclude(filename) {
-  //   const isIncluded = this.include ? this.include.test(filename) : true;
-  //   const isExcluded = this.exclude ? this.exclude.test(filename) : false;
-
-  //   return isIncluded && !isExcluded;
-  // }
   // 获取文件的绝对路径
   getAssetPath(compilation, name) {
     return path.join(
@@ -52,26 +58,26 @@ class Report {
       name.split("?")[0]
     );
   }
-  // 上传文件
-  // async uploadFile({ filePath, name }) {
-  //   console.log(filePath);
-  //   try {
-  //     await request({
-  //       url: `${this.sentryReleaseUrl()}/${this.release}/files/`, // 上传的sentry路径
-  //       method: "POST",
-  //       auth: {
-  //         bearer: this.apiKey,
-  //       },
-  //       headers: {},
-  //       formData: {
-  //         file: fs.createReadStream(filePath),
-  //         name: this.filenameTransform(name),
-  //       },
-  //     });
-  //   } catch (e) {
-  //     console.error(`uploadFile failed ${filePath}`);
-  //   }
-  // }
+  uploadFiles(files) {
+    files.forEach((file) => {
+      return this.uploadFile(file);
+    });
+    // const pool = new PromisePool(() => {
+    //   const file = files.pop();
+    //   if (!file) {
+    //     return null;
+    //   }
+    //   return this.uploadFile(file);
+    // }, this.uploadFilesConcurrency);
+    // return pool.start();
+  }
+
+  async uploadFile({ filePath, name }) {
+    let formData = new FormData();
+    const content = fs.createReadStream(filePath);
+    formData.set(name, content);
+    await this.request(formData);
+  }
 
   // 删除 sourcemaps
   // sentryDel(compiler) {
