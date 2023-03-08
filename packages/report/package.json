@@ -1,0 +1,36 @@
+{
+  "name": "@apply-monitor/report",
+  "version": "0.0.0",
+  "description": "webpack上报插件",
+  "main": "lib/index.esm.js",
+  "module": "lib/index.cjs.js",
+  "typings": "lib/types/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c ./scripts/build.js ",
+    "build:watch": "rollup -w -c ./scripts/build.js",
+    "lint": "eslint --fix"
+  },
+  "author": "lycarrot",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-eslint": "^9.0.3",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/node": "^18.14.4",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-jsonc": "^2.6.0",
+    "eslint-plugin-markdown": "^3.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.3",
+    "rollup": "^3.11.0",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.4"
+  },
+  "keywords": []
+}
