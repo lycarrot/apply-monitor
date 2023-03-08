@@ -1,5 +1,3 @@
 packages:
   - packages/*
-  - play
-  - test
-  - services
+  - test/*
