@@ -7,7 +7,7 @@ const router = koaRouter({
 });
 
 // API
-router.get('/goods', info.getCollect);
+router.get('/info/collect', info.getCollect);
 
 
 export default router;

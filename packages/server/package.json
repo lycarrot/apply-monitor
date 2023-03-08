@@ -3,7 +3,8 @@
   "description": "监控平台服务端",
   "version": "1.0.0",
   "scripts": {
-    "start": "nodemon --watch app --exec ts-node ./app/index.ts",
+    "start": "nodemon --watch app --exec ts-node --prof ./app/index.ts",
+    "test": "node --inspect-brk ./index.js",
     "commitmsg": "validate-commit-msg",
     "commit": "git-cz ",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"

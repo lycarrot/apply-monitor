@@ -11,8 +11,8 @@ app
 //     .use(middlewares())
     .use(bodyParser())
     .use(cors())
-    // .use(router.routes())
-    // .use(router.allowedMethods()); 
+    .use(router.routes())
+    .use(router.allowedMethods()); 
 
 app.listen(8000);
 export default app;
