@@ -6,4 +6,5 @@ router.get('/collect/collect', collect.getInfo);
 
 router.get('/collect/sourcemap', collect.getSourcemap);
 
+
 export default router
