@@ -8,11 +8,11 @@ module.exports = merge(baseConfig, {
   devServer: {
     contentBase: path.join(process.cwd(),'./dist'),
     hot: true,
-    port:8081,
+    port:8083,
     open:true,
-    stats: "errors-only",
+    stats: "errors-only"
   },
   devtool: "cheap-source-map",
   mode: "development",
-  stats: "errors-only",
+  // stats: "errors-only",
 });

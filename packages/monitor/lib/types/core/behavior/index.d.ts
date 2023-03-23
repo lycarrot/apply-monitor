@@ -1,6 +1,9 @@
-import { InitOptions } from '../../types';
-declare class Behavoir {
+import { InitOptions, ReportValue, BehaviorType } from '../../types';
+import { ReportInfo } from '../../common';
+declare class Behivor {
+    reportInfo: ReportInfo;
     constructor(options: InitOptions);
     init(options: InitOptions): void;
+    report(secondType: BehaviorType, value: ReportValue): void;
 }
-export default Behavoir;
+export default Behivor;

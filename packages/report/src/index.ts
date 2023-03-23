@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
-import axios from "axios";
+import request from "request-promise";
+import PromisePool from "es6-promise-pool";
 
 interface Options {
   url: string;
@@ -20,22 +21,11 @@ class Report {
       "report",
       async (compilation, callback) => {
         const files = this.getFiles(compilation);
-        console.log("files", files);
-        debugger;
-        // await this.createRelease();
+
         await this.uploadFiles(files);
-        console.info("\n\u001b[32mUpload successfully.\u001b[39m\n");
         callback(null);
       }
     );
-  }
-  request(data) {
-    const instance = axios.create({
-      headers: { "content-type": "multipart/form-data" },
-    });
-    return instance.post(this.options.url, {
-      data: data,
-    });
   }
   getFiles(compilation) {
     // 通过 compilation.assets 获取我们需要的文件信息，格式信息
@@ -59,24 +49,32 @@ class Report {
     );
   }
   uploadFiles(files) {
-    files.forEach((file) => {
+    const pool = new PromisePool(() => {
+      const file = files.pop();
+      if (!file) {
+        return null;
+      }
       return this.uploadFile(file);
-    });
-    // const pool = new PromisePool(() => {
-    //   const file = files.pop();
-    //   if (!file) {
-    //     return null;
-    //   }
-    //   return this.uploadFile(file);
-    // }, this.uploadFilesConcurrency);
-    // return pool.start();
+    }, 3);
+    return pool.start();
   }
 
   async uploadFile({ filePath, name }) {
-    let formData = new FormData();
-    const content = fs.createReadStream(filePath);
-    formData.set(name, content);
-    await this.request(formData);
+    await request({
+      url: `${this.options.url}`,
+      method: "POST",
+      headers: {},
+      formData: {
+        file: fs.createReadStream(filePath),
+        name: name,
+      },
+    })
+      .then((res) => {
+        console.log("res", res);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
   }
 
   // 删除 sourcemaps
