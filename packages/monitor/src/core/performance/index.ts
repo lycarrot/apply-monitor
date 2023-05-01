@@ -27,16 +27,15 @@ class Performance {
     this.init();
   }
   init() {
-    getFP(this.setStore);
-    getLCP(this.setStore);
-    getCLS(this.setStore);
-    getFID(this.setStore);
-    getNavConnection(this.setStore);
-    getNavTiming(this.setStore);
-    getFSP(this.setStore);
-    getMemory(this.setStore);
-    getDevices(this.setStore);
-
+    getFP(this.setStore.bind(this));
+    getLCP(this.setStore.bind(this));
+    getCLS(this.setStore.bind(this));
+    getFID(this.setStore.bind(this));
+    getNavConnection(this.setStore.bind(this));
+    getNavTiming(this.setStore.bind(this));
+    getFSP(this.setStore.bind(this));
+    getMemory(this.setStore.bind(this));
+    getDevices(this.setStore.bind(this));
     this.report();
   }
   report() {

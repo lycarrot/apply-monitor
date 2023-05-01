@@ -1,4 +1,4 @@
-import { InitOptions, ErrorType, VueInstance, ReportValue } from '../../types';
+import { InitOptions, ErrorType, ReportValue } from '../../types';
 import { ReportInfo } from '../../common';
 declare class Error {
     reportInfo: ReportInfo;
@@ -6,7 +6,7 @@ declare class Error {
     init(options: InitOptions): void;
     report(secondType: ErrorType, value: ReportValue): void;
     handleJS(): void;
-    handleVue(Vue: VueInstance): void;
+    handleVue(Vue: any): void;
     handleAajxError(): void;
 }
 export default Error;

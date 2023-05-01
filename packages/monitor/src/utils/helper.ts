@@ -20,21 +20,38 @@ export function getNowTime(): number {
   return Date.now();
 }
 
-export const switchToMB = (bytes: number): number | null => {
+export function switchToMB(bytes: number): number | null {
   if (typeof bytes !== 'number') {
     return null;
   }
   return parseFloat((bytes / Math.pow(1024, 2)).toFixed(2));
-};
+}
 
-export const generateId = (): string => {
+export function generateId(): string {
   return uuidv4();
-};
+}
 
-export const getUid = () => {
-  let uuid = localStorage.getItem('uuid');
+export function getUid(): string {
+  let key = 'uuid';
+  let uuid = localStorage.getItem(key);
   if (uuid) return uuid;
   uuid = generateId();
-  localStorage.setItem('uuid', uuid);
+  localStorage.setItem(key, uuid);
   return uuid;
-};
+}
+
+export function getIdentity(): string {
+  const key = 'identity';
+  let identity = sessionStorage.getItem(key);
+  if (!identity) {
+    // 生成标识
+    identity = generateId();
+    sessionStorage.setItem(key, identity);
+  }
+  return identity;
+}
+
+export function getReferer(): string {
+  if (typeof document === 'undefined' || document.location == null) return '';
+  return document.location.href;
+}

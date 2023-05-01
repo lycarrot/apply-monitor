@@ -7,7 +7,6 @@ const cleanWebpackPlugin = require("clean-webpack-plugin");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
 // 从css文件中提取css代码到单独的文件中，对css代码进行代码压缩等
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ApplyMonitorReport = require("@apply-monitor/report");
 
 module.exports = {
   entry: "./src/index.js",
@@ -78,6 +77,6 @@ module.exports = {
       // chunks: [name],
       inject: true,
     }),
-    new ApplyMonitorReport()
+
   ],
 };

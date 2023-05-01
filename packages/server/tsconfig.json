@@ -11,11 +11,13 @@
     "lib": ["ES6", "DOM"],
     "importHelpers": true,
     "allowJs": true,
-    "composite": true
+    "composite": true,
+    "typeRoots": ["./node_modules/@types", "./typings"]
   },
   "include": [
-   "index.ts",
-
+    "./app/**/*.ts",
+    "./app/**/*.d.ts",
+    "./index.ts"
   ],
   "exclude": [
     "node_modules"

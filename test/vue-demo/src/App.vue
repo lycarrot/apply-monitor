@@ -1,11 +1,14 @@
 <template>
-    <div class="parent">999</div>
+    <div class="parent">
+        <router-link to="/home">home</router-link>
+        <router-link to="/about">about</router-link>
+        <router-view></router-view>
+    </div>
 </template>
 <script>
+
 export default {
-    created(){
-        let a=new Set()
-    }
+
 }
 </script>
 

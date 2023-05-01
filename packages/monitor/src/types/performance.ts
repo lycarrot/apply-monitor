@@ -58,3 +58,7 @@ export interface DevicesInfo {
   userAgent?: string;
   screenResolution: string;
 }
+
+export interface PerReportData extends BaseReportData {
+  value?: ReportValue;
+}

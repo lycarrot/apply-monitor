@@ -1,0 +1,28 @@
+import Redis from 'ioredis';
+import config from 'config';
+
+interface ObjectConfig{
+    [key:string]:any
+}
+const connections:ObjectConfig = {};
+const redisServers = config.get('redis') as ObjectConfig
+
+Object.keys(redisServers).forEach((item) => {
+  const redisConfig = redisServers[item];
+  let client;
+  // 如果配置项是数组则使用 cluster 模式连接
+  if (Array.isArray(redisConfig)) {
+    client = new Redis.Cluster(redisConfig);
+  } else {
+    client = new Redis(redisConfig);
+  }
+  client.on('error', (err) => {
+    log.error(`${item} redis error: ${err}`);
+  });
+  client.on('ready', () => {
+    log.info(`${item} redis connected`);
+  });
+  connections[item] = client;
+});
+
+export default connections;

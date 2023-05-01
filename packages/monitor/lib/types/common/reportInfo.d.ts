@@ -1,12 +1,16 @@
-import { ErrorReportData, InitOptions } from '../types';
+import { PerReportData, ErrorReportData, CommonData, InitOptions } from '../types';
 import { Queue } from './queue';
+type Data = PerReportData | ErrorReportData;
+type SendData = CommonData & Data;
 declare class ReportInfo {
     queue: Queue;
-    url: string;
+    options: InitOptions;
     sendWay: string;
     constructor(options: InitOptions);
-    send(data: ErrorReportData): void;
-    useImg(data: ErrorReportData): void;
-    useAjax(data: ErrorReportData): void;
+    beforeSend(data: Data): SendData;
+    send(data: Data, isImmediate?: boolean): void;
+    useImg(data: Data): () => void;
+    useAjax(data: Data): () => void;
+    useBeacon(data: Data): () => void;
 }
 export { ReportInfo };

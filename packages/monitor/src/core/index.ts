@@ -1,4 +1,4 @@
-import { InitOptions } from '../types';
+import type { InitOptions } from '../types';
 import { defaultOptions } from '../config';
 import Error from './error';
 import Performance from './performance';
@@ -9,11 +9,11 @@ class Monitor {
   }
   init(options: InitOptions): void {
     if (!options.url) {
-      console.error('url必传');
+      console.error('上报url必传');
       return;
     }
-    if (!options.apiKey) {
-      console.error('apiKey必传');
+    if (!options.project) {
+      console.error('项目pro必传');
       return;
     }
     if (options.isVue && !options.vue) {
@@ -21,12 +21,16 @@ class Monitor {
       return;
     }
     this.setDefault(options);
-    new Error(options);
-    new Performance(options);
+    if (options.isCollectPer) {
+      new Performance(options);
+    }
+    if (options.isCollectErr) {
+      new Error(options);
+    }
   }
   setDefault(options: InitOptions) {
     Object.keys(defaultOptions).forEach((key: string) => {
-      if (!options[key]) {
+      if (options[key] == null) {
         options[key] = defaultOptions[key];
       }
     });

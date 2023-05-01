@@ -5,7 +5,7 @@ import {
   JsEventTarget,
   AjaxEventTarget,
   Level,
-  VueInstance,
+  // VueInstance,
   ViewModel,
   RejectReason,
   ReportValue,
@@ -21,21 +21,23 @@ class Error {
   }
   init(options: InitOptions) {
     this.handleJS();
+    this.handleAajxError();
     if (options.isVue) {
       this.handleVue(options.vue);
     }
-    if (options.sendWay == 'ajax') {
-      this.handleAajxError();
-    }
   }
   report(secondType: ErrorType, value: ReportValue) {
-    this.reportInfo.send({
-      type: MonitorType.ERROR,
-      secondType: secondType,
-      level: Level.ERROR,
-      time: getNowTime(),
-      value: value,
-    });
+    console.log('value', value);
+    this.reportInfo.send(
+      {
+        type: MonitorType.ERROR,
+        secondType: secondType,
+        level: Level.ERROR,
+        time: getNowTime(),
+        value: value,
+      },
+      true
+    );
   }
   // js错误监控
   handleJS() {
@@ -44,7 +46,7 @@ class Error {
       (event: ErrorEvent) => {
         let target = event.target as JsEventTarget;
         if (target && (target.src || target.href)) {
-          this.report(ErrorType.JS, {
+          this.report(ErrorType.RESOURCE, {
             message: '资源加载异常了',
             filename: target.src || target.href,
             tagName: target.tagName,
@@ -61,7 +63,7 @@ class Error {
       },
       true
     );
-
+    // promise错误捕捉
     window.addEventListener(
       'unhandledrejection',
       (event: PromiseRejectionEvent) => {
@@ -94,8 +96,8 @@ class Error {
     );
   }
   // vue错误监控;
-  handleVue(Vue: VueInstance) {
-    Vue.config.errorHandler = (error: Error, vm: ViewModel, info: string) => {
+  handleVue(Vue) {
+    Vue.config.errorHandler = (error, vm, info) => {
       let componentName: string;
       if (Object.prototype.toString.call(vm) === '[object Object]') {
         componentName = vm._isVue

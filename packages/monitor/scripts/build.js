@@ -21,7 +21,7 @@ export default [
       },
       {
         file: pkg.browser,
-        name: pkg.name,
+        name: 'Monitor',
         format: 'umd',
       },
     ],

@@ -6,7 +6,6 @@ import errorHandler from './errorHandler';
 export default () => {
     return compose(
         [
-            postProcessing,
             errorHandler
         ]
     )

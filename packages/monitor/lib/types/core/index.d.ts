@@ -1,4 +1,4 @@
-import { InitOptions } from '../types';
+import type { InitOptions } from '../types';
 declare class Monitor {
     constructor(options: InitOptions);
     init(options: InitOptions): void;

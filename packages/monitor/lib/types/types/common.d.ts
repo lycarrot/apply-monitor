@@ -18,3 +18,8 @@ export interface ObjAnyAttr {
     [key: string]: any;
 }
 export type ReportValue = string | number | ObjAnyAttr;
+export interface CommonData {
+    project: string;
+    projectSub: string;
+    referer: string;
+}

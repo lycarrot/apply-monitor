@@ -1,4 +1,7 @@
 export declare const defaultOptions: {
-    isVue: boolean;
+    url: string;
     sendWay: string;
+    isCollectErr: boolean;
+    isCollectPer: boolean;
+    isCollectBehavior: boolean;
 };

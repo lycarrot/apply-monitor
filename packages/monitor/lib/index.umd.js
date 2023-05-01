@@ -1,12 +1,15 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global["@apply-monitor/monitor"] = factory());
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Monitor = factory());
 })(this, (function () { 'use strict';
 
     var defaultOptions = {
-        isVue: false,
-        sendWay: 'img',
+        url: '//127.0.0.1:8000/api/collect/info/detail',
+        sendWay: 'sendBeacon',
+        isCollectErr: true,
+        isCollectPer: true,
+        isCollectBehavior: true,
     };
 
     var MonitorType;
@@ -52,6 +55,71 @@
         BehaviorType["PD"] = "page-duration";
     })(BehaviorType || (BehaviorType = {}));
 
+    // Unique ID creation requires a high quality random # generator. In the browser we therefore
+    // require the crypto API and do not support built-in fallback to lower quality random number
+    // generators (like Math.random()).
+    let getRandomValues;
+    const rnds8 = new Uint8Array(16);
+    function rng() {
+      // lazy load so that environments that need to polyfill have a chance to do so
+      if (!getRandomValues) {
+        // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+        getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto);
+
+        if (!getRandomValues) {
+          throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
+        }
+      }
+
+      return getRandomValues(rnds8);
+    }
+
+    /**
+     * Convert array of 16 byte values to UUID string format of the form:
+     * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+     */
+
+    const byteToHex = [];
+
+    for (let i = 0; i < 256; ++i) {
+      byteToHex.push((i + 0x100).toString(16).slice(1));
+    }
+
+    function unsafeStringify(arr, offset = 0) {
+      // Note: Be careful editing this code!  It's been tuned for performance
+      // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+      return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+    }
+
+    const randomUUID = typeof crypto !== 'undefined' && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+    var native = {
+      randomUUID
+    };
+
+    function v4(options, buf, offset) {
+      if (native.randomUUID && !buf && !options) {
+        return native.randomUUID();
+      }
+
+      options = options || {};
+      const rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+      rnds[6] = rnds[6] & 0x0f | 0x40;
+      rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+      if (buf) {
+        offset = offset || 0;
+
+        for (let i = 0; i < 16; ++i) {
+          buf[offset + i] = rnds[i];
+        }
+
+        return buf;
+      }
+
+      return unsafeStringify(rnds);
+    }
+
     function formatParams(obj) {
         var strArr = [];
         Object.keys(obj).forEach(function (key) {
@@ -69,12 +137,30 @@
     function getNowTime() {
         return Date.now();
     }
-    var switchToMB = function (bytes) {
+    function switchToMB(bytes) {
         if (typeof bytes !== 'number') {
             return null;
         }
         return parseFloat((bytes / Math.pow(1024, 2)).toFixed(2));
-    };
+    }
+    function generateId() {
+        return v4();
+    }
+    function getIdentity() {
+        var key = 'identity';
+        var identity = sessionStorage.getItem(key);
+        if (!identity) {
+            // 生成标识
+            identity = generateId();
+            sessionStorage.setItem(key, identity);
+        }
+        return identity;
+    }
+    function getReferer() {
+        if (typeof document === 'undefined' || document.location == null)
+            return '';
+        return document.location.href;
+    }
 
     var isPerformance = function () {
         return (!!window.performance &&
@@ -173,33 +259,63 @@
 
     var ReportInfo = /** @class */ (function () {
         function ReportInfo(options) {
-            this.url = options.url;
+            this.options = options;
             this.sendWay = options.sendWay;
             this.queue = new Queue();
         }
-        ReportInfo.prototype.send = function (data) {
-            this.sendWay == 'img' ? this.useImg(data) : this.useAjax(data);
+        ReportInfo.prototype.beforeSend = function (data) {
+            var commonInfo = {
+                project: this.options.project,
+                projectSub: this.options.proSub,
+                referer: getReferer(),
+                identity: getIdentity(),
+            };
+            return Object.assign(data, commonInfo);
+        };
+        ReportInfo.prototype.send = function (data, isImmediate) {
+            var sendData = this.beforeSend(data);
+            var fn = this.sendWay == 'sendBeacon'
+                ? this.useBeacon(sendData)
+                : this.sendWay == 'img'
+                    ? this.useImg(sendData)
+                    : this.useAjax(sendData);
+            isImmediate ? fn() : this.queue.push(fn);
         };
         ReportInfo.prototype.useImg = function (data) {
             var _this = this;
             var fn = function () {
                 var img = new Image();
-                var spliceStr = _this.url.indexOf('?') === -1 ? '?' : '&';
-                img.src = "".concat(_this.url).concat(spliceStr).concat(formatParams(data));
+                var spliceStr = _this.options.url.indexOf('?') === -1 ? '?' : '&';
+                img.src = "".concat(_this.options.url).concat(spliceStr).concat(formatParams(data));
                 img = null;
             };
-            this.queue.push(fn);
+            return fn;
         };
         ReportInfo.prototype.useAjax = function (data) {
             var _this = this;
             var fn = function () {
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', _this.url);
+                xhr.open('POST', _this.options.url);
                 xhr.withCredentials;
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(JSON.stringify(data));
+                xhr.onreadystatechange = function () {
+                    console.log(xhr.readyState, xhr.status);
+                };
             };
-            this.queue.push(fn);
+            return fn;
+        };
+        ReportInfo.prototype.useBeacon = function (data) {
+            var _this = this;
+            if (navigator.sendBeacon) {
+                var fn = function () {
+                    navigator.sendBeacon(_this.options.url, JSON.stringify(data));
+                };
+                return fn;
+            }
+            else {
+                return this.useAjax(data);
+            }
         };
         return ReportInfo;
     }());
@@ -288,21 +404,20 @@
         }
         Error.prototype.init = function (options) {
             this.handleJS();
+            this.handleAajxError();
             if (options.isVue) {
                 this.handleVue(options.vue);
             }
-            if (options.sendWay == 'ajax') {
-                this.handleAajxError();
-            }
         };
         Error.prototype.report = function (secondType, value) {
+            console.log('value', value);
             this.reportInfo.send({
                 type: MonitorType.ERROR,
                 secondType: secondType,
                 level: Level.ERROR,
                 time: getNowTime(),
                 value: value,
-            });
+            }, true);
         };
         // js错误监控
         Error.prototype.handleJS = function () {
@@ -310,7 +425,7 @@
             window.addEventListener('error', function (event) {
                 var target = event.target;
                 if (target && (target.src || target.href)) {
-                    _this.report(ErrorType.JS, {
+                    _this.report(ErrorType.RESOURCE, {
                         message: '资源加载异常了',
                         filename: target.src || target.href,
                         tagName: target.tagName,
@@ -326,6 +441,7 @@
                     });
                 }
             }, true);
+            // promise错误捕捉
             window.addEventListener('unhandledrejection', function (event) {
                 var message;
                 var filename;
@@ -770,15 +886,15 @@
             this.init();
         }
         Performance.prototype.init = function () {
-            getFP(this.setStore);
-            getLCP(this.setStore);
-            getCLS(this.setStore);
-            getFID(this.setStore);
-            getNavConnection(this.setStore);
-            getNavTiming(this.setStore);
-            getFSP(this.setStore);
-            getMemory(this.setStore);
-            getDevices(this.setStore);
+            getFP(this.setStore.bind(this));
+            getLCP(this.setStore.bind(this));
+            getCLS(this.setStore.bind(this));
+            getFID(this.setStore.bind(this));
+            getNavConnection(this.setStore.bind(this));
+            getNavTiming(this.setStore.bind(this));
+            getFSP(this.setStore.bind(this));
+            getMemory(this.setStore.bind(this));
+            getDevices(this.setStore.bind(this));
             this.report();
         };
         Performance.prototype.report = function () {
@@ -812,11 +928,11 @@
         }
         Monitor.prototype.init = function (options) {
             if (!options.url) {
-                console.error('url必传');
+                console.error('上报url必传');
                 return;
             }
-            if (!options.apiKey) {
-                console.error('apiKey必传');
+            if (!options.project) {
+                console.error('项目pro必传');
                 return;
             }
             if (options.isVue && !options.vue) {
@@ -824,12 +940,16 @@
                 return;
             }
             this.setDefault(options);
-            new Error$1(options);
-            new Performance(options);
+            if (options.isCollectPer) {
+                new Performance(options);
+            }
+            if (options.isCollectErr) {
+                new Error$1(options);
+            }
         };
         Monitor.prototype.setDefault = function (options) {
             Object.keys(defaultOptions).forEach(function (key) {
-                if (!options[key]) {
+                if (options[key] == null) {
                     options[key] = defaultOptions[key];
                 }
             });

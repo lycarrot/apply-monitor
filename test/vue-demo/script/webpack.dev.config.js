@@ -12,7 +12,7 @@ module.exports = merge(baseConfig, {
     open:true,
     stats: "errors-only"
   },
-  devtool: "cheap-source-map",
+  devtool: "source-map",
   mode: "development",
   // stats: "errors-only",
 });
