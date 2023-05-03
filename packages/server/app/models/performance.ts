@@ -23,6 +23,10 @@ const performanceModel = sequelize.define(
       type: DataTypes.STRING,
       field: "project",
     },
+    version: {
+      type: DataTypes.STRING,
+      field: "version",
+    },
     projectSub: {
       type: DataTypes.STRING,
       field: "projectSub",
@@ -39,18 +43,9 @@ const performanceModel = sequelize.define(
       type: DataTypes.STRING,
       field: "level",
     },
-    record_time: {
-      type: DataTypes.DATE,
-      field: "record_time",
-    },
-    report_time: {
-      type: DataTypes.DATE,
-      field: "report_time",
-    },
   },
   {
     tableName: "performance",
-    timestamps: false,
   }
 );
 export type PerformanceModel=typeof performanceModel

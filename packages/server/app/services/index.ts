@@ -1,21 +1,17 @@
 import models from "../models";
 import Collect from "./collect";
+import Error from "./error";
+import { propAny } from "../types";
 
-interface ServicesMap {
-  [key:string]: typeof Collect;
-}
-interface Services {
-  [key:string]: InstanceType<typeof Collect>;
-}
-const servicesMap: ServicesMap = {
-  'collect': Collect,
+const servicesMap: propAny = {
+  collect: Collect,
+  error: Error,
 };
 
-const services:Services = {}
+const services: propAny = {};
 
-Object.keys(servicesMap).forEach((name:string) => {
-  services[name] = new servicesMap[name](models)
+Object.keys(servicesMap).forEach((name: string) => {
+  services[name] = new servicesMap[name](models);
 });
 
-
-export default services
+export default services;

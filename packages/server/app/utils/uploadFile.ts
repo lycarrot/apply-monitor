@@ -1,16 +1,24 @@
 import multer from "koa-multer";
 import path from "path";
-import fs from "fs";
-import {queryUrl,mkdirsSync} from "../utils/helper"
+import config from 'config';
+import {queryUrl,mkdirsSync} from "../utils/helper";
+// import fs from "fs";
 
+const sourceMapFile=config.get('sourceMap');
 
 function uploadFile() {
   let storage = multer.diskStorage({
     destination: async function (req: any, file: any, cb: any) {
       const params=queryUrl(req.url)
-      const directory=''
-      const complPath = path.resolve(`static/sourcemap/${params&&params.project}/${params&&params.version}`);
-      mkdirsSync(complPath)
+      const complPath = path.resolve(`${sourceMapFile}/${params&&params.project}/${params&&params.version}`);
+      mkdirsSync(complPath);  
+      // const files = await fs.readdirSync(complPath);
+      //   if(files.length){
+      //     files.forEach(async (file:string) => {
+      //       const childPath = complPath + "/" + file;
+      //       await fs.unlinkSync(childPath);
+      //     });  
+      // }
       cb(null, complPath);
     },
     filename: (ctx: any, file: any, cb: any) => {

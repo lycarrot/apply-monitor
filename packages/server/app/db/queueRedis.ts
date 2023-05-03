@@ -18,7 +18,7 @@ queue.process("handlePerformance", (job:Job, done:DoneCallback) => {
   services.collect
     .handlePerformance(job.data.item)
     .then(() => done())
-    .catch((err) => {
+    .catch((err:string) => {
       log.error(err);
       done(err);
     });
@@ -37,7 +37,7 @@ queue.process(taskName, (job:Job, done:DoneCallback) => {
         log.trace(`${taskName} job removed`, job.id);
       });
     })
-    .catch((err) => {
+    .catch((err:string) => {
       log.error(err);
       done(err);
     });

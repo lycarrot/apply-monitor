@@ -13,6 +13,5 @@ router.post(
   }
 );
 
-router.get("/reverse/sourcemap/:id",)
 
 export default router;

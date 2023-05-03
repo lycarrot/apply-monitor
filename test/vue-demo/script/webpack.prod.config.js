@@ -9,7 +9,7 @@ const ApplyMonitorReport = require("@apply-monitor/report");
 
 module.exports = merge(baseConfig, {
     mode: 'production',
-    devtool:'sourcemap',
+    devtool:'source-map',
     plugins: [
       new ApplyMonitorReport({
         url:'http://127.0.0.1:8080/api/common/upload/sourcemap',

@@ -266,6 +266,7 @@
         ReportInfo.prototype.beforeSend = function (data) {
             var commonInfo = {
                 project: this.options.project,
+                version: this.options.version,
                 projectSub: this.options.proSub,
                 referer: getReferer(),
                 identity: getIdentity(),
@@ -436,8 +437,9 @@
                     _this.report(ErrorType.JS, {
                         message: message,
                         filename: filename,
-                        position: "".concat(lineno, ":").concat(colno),
-                        stack: getLines(event.error.stack),
+                        row: lineno,
+                        col: colno,
+                        stack: event.error && getLines(event.error.stack),
                     });
                 }
             }, true);
@@ -465,7 +467,8 @@
                 _this.report(ErrorType.PROMISE, {
                     message: message,
                     filename: filename,
-                    position: "".concat(line, ":").concat(column),
+                    row: line,
+                    col: column,
                     stack: stack,
                 });
             }, true);
@@ -480,12 +483,20 @@
                         ? vm.$options.name || vm.$options._componentTag
                         : vm.name;
                 }
-                _this.report(ErrorType.VUE, {
+                var value = {
                     message: error.message,
                     info: info,
                     componentName: componentName,
                     stack: error.stack,
-                });
+                };
+                // 匹配到代码报错出现位置
+                var reg = /.js\:(\d+)\:(\d+)/i;
+                var codePos = error.stack.match(reg);
+                if (codePos.length) {
+                    value.row = parseInt(codePos[1]);
+                    value.col = parseInt(codePos[2]);
+                }
+                _this.report(ErrorType.VUE, value);
             };
         };
         //ajax请求错误
@@ -927,18 +938,8 @@
             this.init(options);
         }
         Monitor.prototype.init = function (options) {
-            if (!options.url) {
-                console.error('上报url必传');
+            if (!this.isSetCondition(options))
                 return;
-            }
-            if (!options.project) {
-                console.error('项目pro必传');
-                return;
-            }
-            if (options.isVue && !options.vue) {
-                console.log('如果isVue为true时,请在vue字段上传入Vue');
-                return;
-            }
             this.setDefault(options);
             if (options.isCollectPer) {
                 new Performance(options);
@@ -946,6 +947,25 @@
             if (options.isCollectErr) {
                 new Error$1(options);
             }
+        };
+        Monitor.prototype.isSetCondition = function (options) {
+            if (!options.url) {
+                console.error('上报url必传');
+                return false;
+            }
+            if (!options.project) {
+                console.error('项目project必传');
+                return false;
+            }
+            if (!options.version) {
+                console.error('项目版本号必传');
+                return false;
+            }
+            if (options.isVue && !options.vue) {
+                console.log('如果isVue为true时,请在vue字段上传入Vue');
+                return false;
+            }
+            return true;
         };
         Monitor.prototype.setDefault = function (options) {
             Object.keys(defaultOptions).forEach(function (key) {

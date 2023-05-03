@@ -2,6 +2,7 @@ import { VueInstance } from './vue';
 export interface InitOptions {
     url: string;
     project: string;
+    version: string | number;
     proSub?: string;
     isCollectErr?: boolean;
     isCollectPer?: boolean;

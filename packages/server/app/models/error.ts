@@ -34,6 +34,10 @@ const errorModel = sequelize.define(
       type: DataTypes.STRING,
       field: "project",
     },
+    version: {
+      type: DataTypes.STRING,
+      field: "version",
+    },
     projectSub: {
       type: DataTypes.STRING,
       field: "projectSub",
@@ -50,18 +54,14 @@ const errorModel = sequelize.define(
       type: DataTypes.STRING,
       field: "level",
     },
-    record_time: {
+    createdAt: {
       type: DataTypes.DATE,
-      field: "record_time",
-    },
-    report_time: {
-      type: DataTypes.DATE,
-      field: "report_time",
-    },
+      field: "createdAt",
+    }
   },
   {
     tableName: "error",
-    timestamps: false,
+    // updatedAt:'false'
   }
 );
 export type ErrorModel = typeof errorModel;

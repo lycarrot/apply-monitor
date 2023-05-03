@@ -23,6 +23,7 @@ class ReportInfo {
   beforeSend(data: Data): SendData {
     let commonInfo = {
       project: this.options.project,
+      version: this.options.version,
       projectSub: this.options.proSub,
       referer: getReferer(),
       identity: getIdentity(),

@@ -8,9 +8,10 @@
   <body>
     <script>
       new Monitor({
-        url: "http://127.0.0.1:8080/api/collect/info/detail",
-        pro: "test",
-        isCollectPer: false,
+        url: 'http://localhost:8080/api/collect/info/detail',
+        project:'testvue',
+        version:'1.0.2',
+        // isCollectPer: false,
       });
     </script>
     <!--不存在的资源异常-->
@@ -18,28 +19,28 @@
     <!-- <script src="https://www.pwstrick.com11"></script> -->
     <script>
       // runtime异常
-      // b
+      b
       // 测试promise
-      function textPromise() {
-        new Promise((resolve, reject) => {
-          reject("11111");
-        });
-      }
-      // 测试ajax请求
-      function textAjax() {
-        var xhr = new XMLHttpRequest();
-        xhr.open(
-          "GET",
-          "http://lovalhost:8089/16_JSON/ajaxServlet?action=javaScriptAjax",
-          true
-        );
-        xhr.onreadystatechange = function () {
-          if (xmlhttprequest.readyState == 4 && xmlhttprequest.status == 200) {
-          }
-        };
-        xhr.send();
-      }
-      textAjax()
+      // function textPromise() {
+      //   new Promise((resolve, reject) => {
+      //     reject("11111");
+      //   });
+      // }
+      // // 测试ajax请求
+      // function textAjax() {
+      //   var xhr = new XMLHttpRequest();
+      //   xhr.open(
+      //     "GET",
+      //     "http://lovalhost:8089/16_JSON/ajaxServlet?action=javaScriptAjax",
+      //     true
+      //   );
+      //   xhr.onreadystatechange = function () {
+      //     if (xmlhttprequest.readyState == 4 && xmlhttprequest.status == 200) {
+      //     }
+      //   };
+      //   xhr.send();
+      // }
+      // textAjax()
     </script>
   </body>
 </html>

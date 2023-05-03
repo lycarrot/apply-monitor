@@ -1,12 +1,11 @@
 <template>
-    <div>about-child</div>
+  <div>about-child</div>
 </template>
 <script>
-export default{
- created(){
-        let a=null
-        console.log(a.length)
-    }
-
-}
+export default {
+  created() {
+    a = null;
+    a.length;
+  },
+};
 </script>

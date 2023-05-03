@@ -56,8 +56,9 @@ class Error {
           this.report(ErrorType.JS, {
             message: message,
             filename: filename,
-            position: `${lineno}:${colno}`,
-            stack: getLines(event.error.stack),
+            row: lineno,
+            col: colno,
+            stack: event.error && getLines(event.error.stack),
           });
         }
       },
@@ -88,7 +89,8 @@ class Error {
         this.report(ErrorType.PROMISE, {
           message,
           filename,
-          position: `${line}:${column}`,
+          row: line,
+          col: column,
           stack,
         });
       },
@@ -104,12 +106,20 @@ class Error {
           ? vm.$options.name || vm.$options._componentTag
           : vm.name;
       }
-      this.report(ErrorType.VUE, {
+      const value: ReportValue = {
         message: error.message,
         info: info,
         componentName: componentName,
         stack: error.stack,
-      });
+      };
+      // 匹配到代码报错出现位置
+      const reg = /.js\:(\d+)\:(\d+)/i;
+      const codePos = error.stack.match(reg);
+      if (codePos.length) {
+        value.row = parseInt(codePos[1]);
+        value.col = parseInt(codePos[2]);
+      }
+      this.report(ErrorType.VUE, value);
     };
   }
   //ajax请求错误

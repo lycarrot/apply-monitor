@@ -18,13 +18,6 @@ class Collect {
     //创建数据
     let row = await this.createError(data); 
     row = row.toJSON();
-    // 添加行为记录
-    // if (monitor.record) {
-    //   await this.models.WebMonitorRecord.create({
-    //     monitor_id: row.id,
-    //     record: monitor.record,
-    //   });
-    // }
     return row;
   }
   createError(data:any){

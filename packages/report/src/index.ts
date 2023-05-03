@@ -3,15 +3,14 @@ import fs from "fs";
 import request from "request-promise";
 import PromisePool from "es6-promise-pool";
 
-
 interface Options {
   url: string;
   project: string;
   version: string | number;
   include?: RegExp;
   exclude?: RegExp;
-  afterDelMap?:boolean;
-  delInclude?:RegExp;
+  afterDelMap?: boolean;
+  delInclude?: RegExp;
 }
 interface FileLists {
   name: string;
@@ -22,7 +21,7 @@ const DEFAULT_DELETE = /\.map$/;
 
 class Report {
   options: Options;
-  constructor(options:Options) {
+  constructor(options: Options) {
     this.options = options;
     this.options.include = this.options.include || DEFAULT_INCLUDE;
     this.options.delInclude = this.options.delInclude || DEFAULT_DELETE;
@@ -120,7 +119,6 @@ class Report {
       .forEach((name) => {
         const filePath = this.getAssetPath(stats.compilation, name);
         if (filePath) {
-          console.log(filePath);
           fs.unlinkSync(filePath);
         } else {
           console.warn("文件不存在或已经删除完了");

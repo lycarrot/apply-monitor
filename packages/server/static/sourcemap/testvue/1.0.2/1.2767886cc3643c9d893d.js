@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[1],{6:function(n,t,l){"use strict";l.r(t);var e=function(){var n=this._self._c;return n("div",[this._v("aboute\n    "),n("child")],1)};e._withStripped=!0;var i=function(){return(0,this._self._c)("div",[this._v("about-child")])};i._withStripped=!0;var u={created:function(){console.log(null.length)}},o=l(1),c={name:"about",components:{Child:Object(o.a)(u,i,[],!1,null,null,null).exports}},r=Object(o.a)(c,e,[],!1,null,null,null);t.default=r.exports}}]);
-//# sourceMappingURL=1.2767886cc3643c9d893d.js.map

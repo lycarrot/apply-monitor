@@ -4,6 +4,7 @@ export interface InitOptions {
   url: string;
   //项目名称
   project: string;
+  version: string | number;
   //子项目名称
   proSub?: string;
   // 是否收集错误
