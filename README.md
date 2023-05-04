@@ -16,13 +16,13 @@
 └── README.md
 ```
 项目整体架构
-![项目整体架构流程图](https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/framework.png)
+<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/framework.png" width="70%">
 
 ### monitor（信息收集）
 整个sdk其实是做了俩部分工作，信息采集+信息上报
 #### 信息采集
 信息采集包括三个部分：错误监控、行为监控、性能监控三个部分
-![信息采集部分](https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/info.png)
+<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/info.png" width="80%">
 #### 信息上报
 ##### 上报方法
 关于信息上报的方式有三种：sendBeacon>image>XMLHttpRequest，默认采用的sendBeacon，如果不兼容这个api，会选择image上报，最后才会选择XMLHttpRequest方式进行上传。当然也可以通过配置自行选择上报方式。
@@ -37,7 +37,7 @@
 服务端采用的koa2+mysql+redis+typescript方式开发，整个服务端可以分为俩部分，信息收集处理存储、提取存储数据分析。
 #### 存储部分
 存储主要是指sdk上报的性能、行为、错误这三部分信息收集，拿到上报的信息之后，会首先对数据做个清洗，然后假如同时监控了多个项目，所以可能存在一下子发送过多的数据，导致服务端信息处理过载崩溃，所以在加入mysql存储之前，会对数据做层队列缓存，缓存方式采用的是kue+redis。
-![信息采集部分](https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/report.png)
+<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/report.png" width="80%">
 #### 数据分析
 主要对项目上报的数据进行处理，然后展示在后台分析平台。
 
