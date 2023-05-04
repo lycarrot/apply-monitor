@@ -1,4 +1,5 @@
 ## 项目介绍
+<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/logo.png" width="80%">
 本项目是一个完整的监控平台体系，项目信息收集sdk、服务端接口API信息处理均已实现，监控后台信息平台管理还在实现中，采用monorepo+pnpm方式开发。
 
 ## 项目结构
