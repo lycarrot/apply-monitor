@@ -16,7 +16,7 @@
 ├── package.json
 └── README.md
 ```
-项目整体架构
+## 项目整体架构
 <image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/framework.png" width="70%">
 
 ### monitor（信息收集）
