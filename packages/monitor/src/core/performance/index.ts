@@ -24,7 +24,6 @@ class Performance {
   constructor(options: InitOptions) {
     this.newStore = new Store()
     this.reportInfo = new ReportInfo(options)
-    const a = 1
     this.init()
   }
   init() {
@@ -63,3 +62,8 @@ class Performance {
 }
 
 export default Performance
+
+const a = function () {
+  console.log(b)
+  const b = 666565
+}
