@@ -13,6 +13,7 @@
   },
   "author": "lycarrot",
   "license": "MIT",
+  "private": "true",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-json": "^6.0.0",

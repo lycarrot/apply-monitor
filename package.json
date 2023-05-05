@@ -8,19 +8,23 @@
     "lint": "eslint --ext .js,.tsx,ts packages",
     "lint:fix": "pnpm run lint --fix",
     "prepare": "husky install",
-    "commit": "cz"
+    "commit": "cz",
+    "changeset": "changeset",
+    "update:version": "changeset version",
+    "release": "changeset publish"
   },
   "keywords": [],
   "author": "luoying",
   "license": "ISC",
   "dependencies": {
-    "@apply-monitor/eslint-config": "workspace:^"
+    "@apply-monitor/eslint-config": "workspace:*"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
+    "@changesets/cli": "^2.26.1",
     "eslint": "^8.32.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2"

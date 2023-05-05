@@ -1,10 +1,11 @@
 {
   "name": "@apply-monitor/server",
   "description": "监控平台服务端",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan"
   },
+  "private": "true",
   "dependencies": {
     "@babel/cli": "^7.21.0",
     "@babel/core": "^7.21.0",
@@ -29,7 +30,7 @@
     "typescript": "^4.9.4"
   },
   "devDependencies": {
-    "@apply-monitor/report": "workspace:^0.0.0",
+    "@apply-monitor/report": "workspace:*",
     "@types/koa-multer": "^1.0.1",
     "bunyan": "^1.8.15",
     "co": "^4.6.0",

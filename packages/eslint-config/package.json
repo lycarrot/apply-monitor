@@ -1,13 +1,16 @@
 {
   "name": "@apply-monitor/eslint-config",
   "version": "1.0.0",
-  "description": "",
+  "description": "eslint通用配置",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "eslint"
+  ],
+  "author": "lycarrot",
   "license": "ISC",
   "peerDependencies": {
     "eslint": "^8.0.0"

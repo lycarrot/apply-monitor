@@ -1,5 +1,5 @@
 {
-  "name": "webpack4-cli",
+  "name": "vue-test",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,8 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@apply-monitor/monitor": "workspace:^0.0.0",
-    "@apply-monitor/report": "workspace:^0.0.0",
+    "@apply-monitor/report": "workspace:*",
     "@babel/core": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
     "autoprefixer": "^10.4.13",
