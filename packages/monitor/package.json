@@ -1,6 +1,6 @@
 {
   "name": "@apply-monitor/monitor",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "监控工具",
   "main": "lib/index.cjs.js",
   "module": "lib/index.esm.js",
@@ -17,7 +17,6 @@
   },
   "author": "lycarrot",
   "license": "MIT",
-  "private": "true",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-json": "^6.0.0",
