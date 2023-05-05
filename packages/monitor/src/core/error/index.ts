@@ -24,6 +24,7 @@ class Error {
     if (options.isVue) {
       this.handleVue(options.vue)
     }
+    const a = 111
   }
   report(secondType: ErrorType, value: ReportValue) {
     console.log('value', value)

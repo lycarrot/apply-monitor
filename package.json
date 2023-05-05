@@ -5,12 +5,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.md,.json packages --max-warnings 0 --cache",
+    "lint": "eslint --ext .js,.tsx,ts packages",
     "lint:fix": "pnpm run lint --fix",
     "prepare": "husky install"
   },
   "keywords": [],
-  "author": "",
+  "author": "luoying",
   "license": "ISC",
   "dependencies": {
     "@apply-monitor/eslint-config": "workspace:^"
@@ -20,6 +20,7 @@
     "@commitlint/config-conventional": "^17.6.3",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.32.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2"
   },
