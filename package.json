@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.md,.json --max-warnings 0 --cache",
+    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.md --max-warnings 0 --cache",
     "lint:fix": "pnpm run lint --fix",
     "prepare": "husky install",
     "commit": "cz",
@@ -38,7 +38,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,vue,md,json}": [
+    "*.{js,jsx,ts,tsx,vue,md}": [
       "prettier --write",
       "eslint --fix"
     ]

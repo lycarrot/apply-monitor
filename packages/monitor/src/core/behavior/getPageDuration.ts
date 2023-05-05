@@ -1,4 +1,4 @@
-import { getUid, onBeforeunload, getUrl } from '../../utils'
+import { onBeforeunload, getUrl } from '../../utils'
 import { Report, BehaviorType } from '../../types'
 export function getPageDuration(report: Report) {
   const start = performance.now()

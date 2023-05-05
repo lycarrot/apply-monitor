@@ -5,4 +5,5 @@ test
 packages/*/node_modules
 packages/monitor/lib
 packages/report/lib
+packages/server/static
 

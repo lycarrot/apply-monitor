@@ -117,7 +117,7 @@ router.post('/lists', async (ctx: Context) => {
     }
   })
   const resLists = await Promise.all([...lists])
-  const data = resLists.map((source, index) => {
+  const resultLists = resLists.map((source, index) => {
     const list = rows[index]
     return {
       id: list.id,
@@ -127,6 +127,11 @@ router.post('/lists', async (ctx: Context) => {
     }
   })
 
-  ctx.body = Resolve.success(data)
+  ctx.body = Resolve.success({
+    lists: resultLists,
+    count,
+    page,
+    pageSize,
+  })
 })
 export default router

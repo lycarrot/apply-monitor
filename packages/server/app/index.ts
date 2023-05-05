@@ -7,7 +7,7 @@ import helmet from 'koa-helmet'
 import config from 'config'
 import bunyan from 'bunyan'
 import bunyanLogger from 'koa-bunyan-logger'
-import jwt from 'koa-jwt'
+// import jwt from 'koa-jwt'
 import validate from 'koa-validate'
 import redis from '../app/db/redis'
 

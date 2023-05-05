@@ -35,7 +35,7 @@ sequelize.sync()
 
 sequelize
   .authenticate()
-  .then((res) => {
+  .then(() => {
     log.info('Connection has been established successfully.')
   })
   .catch((err) => {
