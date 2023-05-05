@@ -15,9 +15,7 @@ export function getDevices(setStore: SetStore) {
     search,
     hash,
   } = location
-
   const { width, height } = window.screen
-
   const info: DevicesInfo = {
     host,
     hostname,

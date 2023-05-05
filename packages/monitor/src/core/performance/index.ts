@@ -62,8 +62,3 @@ class Performance {
 }
 
 export default Performance
-
-const a = function () {
-  console.log(b)
-  const b = 666565
-}
