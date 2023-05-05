@@ -5,7 +5,9 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan"
   },
-  "private": "true",
+  "private": true,
+  "author": "luoying",
+  "license": "ISC",
   "dependencies": {
     "@apply-monitor/eslint-config": "workspace:*",
     "@apply-monitor/report": "workspace:*",
