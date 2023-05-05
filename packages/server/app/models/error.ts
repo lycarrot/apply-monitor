@@ -1,68 +1,68 @@
-import sequelize from "../db/sequelize";
-import { DataTypes } from "sequelize";
+import sequelize from '../db/sequelize'
+import { DataTypes } from 'sequelize'
 
 const errorModel = sequelize.define(
-  "error",
+  'error',
   {
     id: {
       type: DataTypes.BIGINT,
-      field: "id",
+      field: 'id',
       autoIncrement: true,
       primaryKey: true,
     },
     name: {
       type: DataTypes.STRING,
-      field: "name",
+      field: 'name',
     },
     key: {
       type: DataTypes.STRING,
-      field: "key"
+      field: 'key',
     },
     occur: {
       type: DataTypes.INTEGER,
-      field: "occur",
+      field: 'occur',
     },
     value: {
       type: DataTypes.TEXT,
-      field: "value",
+      field: 'value',
     },
     source: {
       type: DataTypes.STRING,
-      field: "source"
+      field: 'source',
     },
     project: {
       type: DataTypes.STRING,
-      field: "project",
+      field: 'project',
     },
     version: {
       type: DataTypes.STRING,
-      field: "version",
+      field: 'version',
     },
     projectSub: {
       type: DataTypes.STRING,
-      field: "projectSub",
+      field: 'projectSub',
     },
     identity: {
       type: DataTypes.STRING,
-      field: "identity"
+      field: 'identity',
     },
     referer: {
       type: DataTypes.STRING,
-      field: "referer",
+      field: 'referer',
     },
     level: {
       type: DataTypes.STRING,
-      field: "level",
+      field: 'level',
     },
     createdAt: {
       type: DataTypes.DATE,
-      field: "createdAt",
-    }
+      field: 'createdAt',
+    },
   },
   {
-    tableName: "error",
+    tableName: 'error',
     // updatedAt:'false'
   }
-);
-export type ErrorModel = typeof errorModel;
-export default errorModel;
+)
+export type ErrorModel = typeof errorModel
+export default errorModel

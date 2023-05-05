@@ -1,4 +1,4 @@
-import { BaseReportData, ReportValue } from './common';
+import { BaseReportData, ReportValue } from './common'
 export enum BehaviorType {
   PV = 'pv',
   VJ = 'vue-jump',
@@ -6,9 +6,9 @@ export enum BehaviorType {
 }
 
 export interface BehaviorReportData extends BaseReportData {
-  value?: ReportValue;
+  value?: ReportValue
 }
 
 export interface Report {
-  (secondType: BehaviorType, value: ReportValue): void;
+  (secondType: BehaviorType, value: ReportValue): void
 }

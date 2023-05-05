@@ -1,10 +1,10 @@
-import performance from "./performance";
-import error from "./error";
+import performance from './performance'
+import error from './error'
 
 const models = {
   performance,
-  error
-};
+  error,
+}
 
-export type Models=typeof models
-export default models;
+export type Models = typeof models
+export default models

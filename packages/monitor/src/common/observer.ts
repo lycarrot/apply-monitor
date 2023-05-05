@@ -1,6 +1,6 @@
 type handler = {
-  (entry: PerformanceEntry): void;
-};
+  (entry: PerformanceEntry): void
+}
 
 export function observe(
   type: string,
@@ -9,8 +9,8 @@ export function observe(
   if (PerformanceObserver.supportedEntryTypes.includes(type)) {
     const ob: PerformanceObserver = new PerformanceObserver((item) =>
       item.getEntries().map(handler)
-    );
-    ob.observe({ type: type, buffered: true });
-    return ob;
+    )
+    ob.observe({ type: type, buffered: true })
+    return ob
   }
 }

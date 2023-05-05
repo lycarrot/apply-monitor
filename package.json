@@ -11,7 +11,10 @@
     "commit": "cz",
     "changeset": "changeset",
     "update:version": "changeset version",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "monitor:build": "pnpm run -C ./packages/monitor build",
+    "monitor:build:watch": "pnpm run -C ./packages/monitor build:watch",
+    "server": "pnpm run -C ./packages/server start"
   },
   "keywords": [],
   "author": "luoying",

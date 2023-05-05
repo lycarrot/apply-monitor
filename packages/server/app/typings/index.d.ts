@@ -1,7 +1,7 @@
-
+/* eslint-disable no-var */
 declare global {
-  var log: any;
-  var redis:any
+  var log: any
+  var redis: any
 }
 
-export {};
+export {}

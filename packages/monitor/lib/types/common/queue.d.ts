@@ -1,10 +1,11 @@
+type Fn = () => void
 declare class Queue {
-    pending: Boolean;
-    callbacks: any[];
-    constructor();
-    push(fn: () => void): void;
-    flushCallbacks(): void;
-    getCallbacks(): any[];
-    clear(): void;
+  pending: boolean
+  callbacks: Fn[]
+  constructor()
+  push(fn: Fn): void
+  flushCallbacks(): void
+  getCallbacks(): Fn[]
+  clear(): void
 }
-export { Queue };
+export { Queue }

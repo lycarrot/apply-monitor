@@ -4,4 +4,4 @@ export const defaultOptions = {
   isCollectErr: true,
   isCollectPer: true,
   isCollectBehavior: true,
-};
+}

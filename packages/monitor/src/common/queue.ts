@@ -1,34 +1,35 @@
+type Fn = () => void
 class Queue {
-  pending: Boolean;
-  callbacks: any[];
+  pending: boolean
+  callbacks: Fn[]
   constructor() {
-    this.pending = false;
-    this.callbacks = [];
+    this.pending = false
+    this.callbacks = []
   }
-  push(fn: () => void): void {
-    if (typeof fn !== 'function') return;
-    this.callbacks.push(fn);
+  push(fn: Fn): void {
+    if (typeof fn !== 'function') return
+    this.callbacks.push(fn)
     if (!this.pending) {
-      this.pending = true;
+      this.pending = true
       Promise.resolve().then(() => {
-        this.flushCallbacks();
-      });
+        this.flushCallbacks()
+      })
     }
   }
   flushCallbacks(): void {
-    this.pending = false;
-    const copies = this.callbacks.slice();
-    this.callbacks.length = 0;
+    this.pending = false
+    const copies = this.callbacks.slice()
+    this.callbacks.length = 0
     for (let i = 0; i < copies.length; i++) {
-      copies[i]();
+      copies[i]()
     }
   }
   getCallbacks() {
-    return this.callbacks;
+    return this.callbacks
   }
   clear() {
-    this.callbacks = [];
+    this.callbacks = []
   }
 }
 
-export { Queue };
+export { Queue }

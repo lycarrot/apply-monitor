@@ -11,20 +11,20 @@ export enum Level {
 }
 
 export interface BaseReportData {
-  type: MonitorType;
-  secondType?: string;
-  time: number;
-  level?: Level;
+  type: MonitorType
+  secondType?: string
+  time: number
+  level?: Level
 }
 
 export interface ObjAnyAttr {
-  [key: string]: any;
+  [key: string]: any
 }
 
-export type ReportValue = string | number | ObjAnyAttr;
+export type ReportValue = string | number | ObjAnyAttr
 
 export interface CommonData {
-  project: string;
-  projectSub: string;
-  referer: string;
+  project: string
+  projectSub: string
+  referer: string
 }

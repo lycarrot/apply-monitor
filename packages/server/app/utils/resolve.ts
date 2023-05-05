@@ -1,19 +1,19 @@
 class Resolve {
-    fail(err:any=null ,code:number = 0, msg:string = 'fail' ) {
-      return {
-        msg,
-        err,
-        code
-      }
-    }
-  
-    success(data:any=null,code:number = 1, msg:string = 'success' ) {
-      return {
-        msg,
-        code,
-        data
-      }
+  fail(err: any = null, code = 0, msg = 'fail') {
+    return {
+      msg,
+      err,
+      code,
     }
   }
-  
-  export default new Resolve()
+
+  success(data: any = null, code = 1, msg = 'success') {
+    return {
+      msg,
+      code,
+      data,
+    }
+  }
+}
+
+export default new Resolve()

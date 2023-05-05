@@ -1,4 +1,4 @@
-import { BaseReportData, ReportValue } from './common';
+import { BaseReportData, ReportValue } from './common'
 export enum PerformanceType {
   FP = 'first-paint',
   FCP = 'first-contentful-paint',
@@ -13,52 +13,52 @@ export enum PerformanceType {
 }
 
 export interface PerformanceReportData extends BaseReportData {
-  value?: ReportValue;
+  value?: ReportValue
 }
 
 export interface StoreData {
-  [prop: string]: PerformanceReportData;
+  [prop: string]: PerformanceReportData
 }
 
 export interface LayoutShift extends PerformanceEntry {
-  value: number;
-  hadRecentInput: boolean;
+  value: number
+  hadRecentInput: boolean
 }
 
 export interface SetStore {
-  (secondType: PerformanceType, value: ReportValue): void;
+  (secondType: PerformanceType, value: ReportValue): void
 }
 
 export interface NodeItem extends Node {
-  tagName?: string;
+  tagName?: string
 }
 
 export interface SourceItem extends PerformanceEntry {
-  initiatorType?: string;
-  fetchStart?: number;
-  responseEnd?: number;
+  initiatorType?: string
+  fetchStart?: number
+  responseEnd?: number
 }
 
 export interface NavConnection {
-  downlink?: number;
-  effectiveType?: string;
-  rtt?: number;
+  downlink?: number
+  effectiveType?: string
+  rtt?: number
 }
 
 export interface DevicesInfo {
-  host: string;
-  hostname: string;
-  href: string;
-  protocol: string;
-  origin: string;
-  port: string;
-  pathname: string;
-  search: string;
-  hash: string;
-  userAgent?: string;
-  screenResolution: string;
+  host: string
+  hostname: string
+  href: string
+  protocol: string
+  origin: string
+  port: string
+  pathname: string
+  search: string
+  hash: string
+  userAgent?: string
+  screenResolution: string
 }
 
 export interface PerReportData extends BaseReportData {
-  value?: ReportValue;
+  value?: ReportValue
 }

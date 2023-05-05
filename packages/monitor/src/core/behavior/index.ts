@@ -1,25 +1,25 @@
-import { getPv } from './getPv';
-import { getVueJump } from './getVueJump';
+import { getPv } from './getPv'
+import { getVueJump } from './getVueJump'
 import {
   InitOptions,
   ReportValue,
   MonitorType,
   BehaviorType,
   Level,
-} from '../../types';
-import { ReportInfo } from '../../common';
-import { getNowTime } from '../../utils';
+} from '../../types'
+import { ReportInfo } from '../../common'
+import { getNowTime } from '../../utils'
 
 class Behivor {
-  reportInfo: ReportInfo;
+  reportInfo: ReportInfo
   constructor(options: InitOptions) {
-    this.init(options);
-    this.reportInfo = new ReportInfo(options);
+    this.init(options)
+    this.reportInfo = new ReportInfo(options)
   }
   init(options: InitOptions) {
-    getPv(this.report);
+    getPv(this.report)
     if (options.isVueJump) {
-      getVueJump(this.report, options.router);
+      getVueJump(this.report, options.router)
     }
   }
   report(secondType: BehaviorType, value: ReportValue) {
@@ -29,8 +29,8 @@ class Behivor {
       level: Level.INFO,
       time: getNowTime(),
       value: value,
-    });
+    })
   }
 }
 
-export default Behivor;
+export default Behivor

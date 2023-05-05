@@ -1,4 +1,4 @@
-import { isPerformanceObserver, getNowTime } from '../../utils'
+import { isPerformanceObserver } from '../../utils'
 import { observe } from '../../common'
 import { PerformanceType, SetStore } from '../../types'
 

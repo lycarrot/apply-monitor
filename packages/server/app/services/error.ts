@@ -1,29 +1,28 @@
-import type { Models } from "../models";
-import { Op } from "sequelize";
-
+import type { Models } from '../models'
+import { Op } from 'sequelize'
 
 class Error {
-  models: Models;
+  models: Models
   constructor(models: Models) {
-    this.models = models;
+    this.models = models
   }
 
   async getErrorLists(data: any) {
-    const { project, page = 1, pageSize = 20, startTime, endTime } = data;
-    const where: any = {};
+    const { project, page = 1, pageSize = 20, startTime, endTime } = data
+    const where: any = {}
     if (project) {
-      where.project = project;
+      where.project = project
     }
     if (startTime || endTime) {
-      where.createdAt = { [Op.between]: [startTime, endTime] };
+      where.createdAt = { [Op.between]: [startTime, endTime] }
     }
     return this.models.error.findAndCountAll({
       where,
-      order: [["id", "DESC"]],
+      order: [['id', 'DESC']],
       raw: true,
       limit: parseInt(pageSize),
       offset: (page - 1) * pageSize,
-    });
+    })
   }
 }
-export default Error;
+export default Error

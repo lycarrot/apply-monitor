@@ -1,2 +1,2 @@
-import { Report } from '../../types';
-export declare function getPv(report: Report): void;
+import { Report } from '../../types'
+export declare function getPv(report: Report): void

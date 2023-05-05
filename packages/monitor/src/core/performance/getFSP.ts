@@ -1,4 +1,4 @@
-import { getNowTime, onLoaded, isIncludeEle, isInScreen } from '../../utils'
+import { onLoaded, isIncludeEle, isInScreen } from '../../utils'
 import { PerformanceType, NodeItem, SourceItem, SetStore } from '../../types'
 import { isLCPDone } from './getLCP'
 

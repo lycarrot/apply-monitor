@@ -1,15 +1,13 @@
-import {
+import type {
   InitOptions,
-  MonitorType,
-  ErrorType,
   JsEventTarget,
   AjaxEventTarget,
-  Level,
   // VueInstance,
   // ViewModel,
   RejectReason,
   ReportValue,
 } from '../../types'
+import { ErrorType, MonitorType, Level } from '../../types'
 import { ReportInfo } from '../../common'
 import { getLines, getNowTime } from '../../utils'
 class Error {
@@ -24,7 +22,6 @@ class Error {
     if (options.isVue) {
       this.handleVue(options.vue)
     }
-    const a = 111
   }
   report(secondType: ErrorType, value: ReportValue) {
     console.log('value', value)
