@@ -3,11 +3,7 @@
   "description": "监控平台服务端",
   "version": "1.0.0",
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan",
-    "test": "node --inspect-brk ./index.js",
-    "commitmsg": "validate-commit-msg",
-    "commit": "git-cz ",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+    "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan"
   },
   "dependencies": {
     "@babel/cli": "^7.21.0",
