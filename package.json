@@ -5,13 +5,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.md,.json packages --max-warnings 0 --cache",
+    "lint:fix": "pnpm run lint --fix",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apply-monitor/monitor": "workspace:^0.0.0",
-    "apply-monitor": "workspace:^1.0.0"
+    "@apply-monitor/eslint-config": "workspace:^"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue,md,json}": [
+      "eslint --fix"
+    ]
   }
 }

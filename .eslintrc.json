@@ -1,0 +1,4 @@
+{
+  "root": true,
+  "extends": ["@apply-monitor/eslint-config"]
+}
