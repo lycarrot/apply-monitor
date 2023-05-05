@@ -29,6 +29,5 @@ export function getDevices(setStore: SetStore) {
     userAgent: 'userAgent' in navigator ? navigator.userAgent : '',
     screenResolution: `${width}*${height}`,
   }
-
   setStore(PerformanceType.DICE, info)
 }

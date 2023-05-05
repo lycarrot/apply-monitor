@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint --ext .js,.tsx,.ts packages",
+    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.md,.json --max-warnings 0 --cache",
     "lint:fix": "pnpm run lint --fix",
     "prepare": "husky install",
     "commit": "cz",
