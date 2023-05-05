@@ -1,8 +1,8 @@
-import { PerformanceType, SetStore, DevicesInfo } from '../../types';
+import { PerformanceType, SetStore, DevicesInfo } from '../../types'
 
 export function getDevices(setStore: SetStore) {
   if (!window.location) {
-    throw new Error('浏览器不支持location');
+    throw new Error('浏览器不支持location')
   }
   const {
     host,
@@ -14,11 +14,11 @@ export function getDevices(setStore: SetStore) {
     pathname,
     search,
     hash,
-  } = location;
+  } = location
 
-  const { width, height } = window.screen;
+  const { width, height } = window.screen
 
-  let info: DevicesInfo = {
+  const info: DevicesInfo = {
     host,
     hostname,
     href,
@@ -30,7 +30,7 @@ export function getDevices(setStore: SetStore) {
     hash,
     userAgent: 'userAgent' in navigator ? navigator.userAgent : '',
     screenResolution: `${width}*${height}`,
-  };
+  }
 
-  setStore(PerformanceType.DICE, info);
+  setStore(PerformanceType.DICE, info)
 }

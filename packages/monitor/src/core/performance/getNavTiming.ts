@@ -1,6 +1,6 @@
-import { isPerformanceObserver, isPerformance, onLoaded } from '../../utils';
-import { observe } from '../../common';
-import { PerformanceType, ObjAnyAttr, SetStore } from '../../types';
+import { isPerformanceObserver, isPerformance, onLoaded } from '../../utils'
+import { observe } from '../../common'
+import { PerformanceType, ObjAnyAttr, SetStore } from '../../types'
 
 // navigation 可以获取到用户访问一个页面的每个阶段的精确时间
 function setPerformanceData(
@@ -21,8 +21,8 @@ function setPerformanceData(
     domContentLoadedEventEnd,
     loadEventStart,
     fetchStart,
-  } = entry;
-  let timing: ObjAnyAttr = {
+  } = entry
+  const timing: ObjAnyAttr = {
     // DNS解析时间
     dnsLookup: (domainLookupEnd - domainLookupStart).toFixed(2),
     // TCP完成握手时间
@@ -49,9 +49,9 @@ function setPerformanceData(
     resourceLoad: (loadEventStart - domContentLoadedEventEnd).toFixed(2),
     // DOM阶段渲染耗时
     domReady: (domContentLoadedEventEnd - fetchStart).toFixed(2),
-  };
+  }
 
-  setStore(PerformanceType.NAV, timing);
+  setStore(PerformanceType.NAV, timing)
 }
 
 function getPerformanceentryTim(): PerformanceNavigationTiming {
@@ -59,26 +59,26 @@ function getPerformanceentryTim(): PerformanceNavigationTiming {
     performance.getEntriesByType('navigation').length > 0
       ? performance.getEntriesByType('navigation')[0]
       : performance.timing
-  ) as PerformanceNavigationTiming;
-  return entryTim;
+  ) as PerformanceNavigationTiming
+  return entryTim
 }
 
 export function getNavTiming(setStore: SetStore) {
   if (!isPerformanceObserver()) {
     if (!isPerformance()) {
-      throw new Error('浏览器不支持performance');
+      throw new Error('浏览器不支持performance')
     } else {
       onLoaded(() => {
-        setPerformanceData(setStore, getPerformanceentryTim());
-      });
+        setPerformanceData(setStore, getPerformanceentryTim())
+      })
     }
   } else {
     const entryHandler = (entry: PerformanceNavigationTiming): void => {
       if (ob) {
-        ob.disconnect();
+        ob.disconnect()
       }
-      setPerformanceData(setStore, entry);
-    };
-    const ob: PerformanceObserver = observe(PerformanceType.NAV, entryHandler);
+      setPerformanceData(setStore, entry)
+    }
+    const ob: PerformanceObserver = observe(PerformanceType.NAV, entryHandler)
   }
 }

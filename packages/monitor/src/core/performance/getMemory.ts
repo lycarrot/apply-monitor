@@ -1,16 +1,16 @@
-import { isPerformance, isNavigator, switchToMB } from '../../utils';
-import { PerformanceType, SetStore } from '../../types';
+import { isPerformance, isNavigator, switchToMB } from '../../utils'
+import { PerformanceType, SetStore } from '../../types'
 
 // 获取内存占用空间
 
 export function getMemory(setStore: SetStore) {
   if (!isPerformance()) {
-    throw new Error('浏览器不支持Performance');
+    throw new Error('浏览器不支持Performance')
   }
   if (!isNavigator()) {
-    throw new Error('浏览器不支持Navigator');
+    throw new Error('浏览器不支持Navigator')
   }
-  let value = {
+  const value = {
     deviceMemory: 'deviceMemory' in navigator ? navigator['deviceMemory'] : 0,
     hardwareConcurrency:
       'hardwareConcurrency' in navigator ? navigator['hardwareConcurrency'] : 0,
@@ -29,6 +29,6 @@ export function getMemory(setStore: SetStore) {
       'memory' in performance
         ? switchToMB(performance['memory']['usedJSHeapSize'])
         : 0,
-  };
-  setStore(PerformanceType.MRY, value);
+  }
+  setStore(PerformanceType.MRY, value)
 }
