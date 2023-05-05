@@ -22,5 +22,9 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'prettier'],
-  rules: {},
+  rules: {
+    'no-useless-escape': 0,
+    // prettier
+    'prettier/prettier': 'error',
+  },
 }
