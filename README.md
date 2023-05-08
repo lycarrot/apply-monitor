@@ -45,7 +45,7 @@
 信息处理分析：<a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/server">server</a><br/>
 信息管理平台(实现中)：<a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/monitor">admin</a><br/>
 
-### <a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/monitor">monitor（信息收集 sdk）</a>
+#### <a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/monitor">monitor（信息收集 sdk）</a>
 
 整个 sdk 其实是做了俩部分工作，信息采集+信息上报
 
@@ -70,7 +70,7 @@
 - 错误监控:触发时会直接上报
 - 其它：会把相应的信息上报加人一个队列里面进行缓存，然后在页面加载完成或页面隐藏时这些时机进行上报，这样可以避免监控 sdk 的请求阻塞页面加载。
 
-### <a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/server">server（存储和分析）</a>
+#### <a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/server">server（存储和分析）</a>
 
 服务端采用的 koa2+mysql+redis+typescript 方式开发，整个服务端可以分为俩部分，信息收集处理存储、提取存储数据分析。
 
@@ -84,7 +84,7 @@
 
 主要对项目上报的数据进行处理，然后展示在后台分析平台。
 
-### <a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/report">report(webpack 上报插件)</a>
+#### <a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/report">report(webpack 上报插件)</a>
 
 因为 sdk 上报的错误代码信息都是经过压缩处理的，是无法直观分析到代码具体报错位置的。可以通过匹配到相应的 source-map 文件，通过错误信息的行列数与对应的 source-map 文件，处理后得到源文件的具体错误信息。所以这里编写了个 webpack 插件，在代码打包完成后，会把相应的 source-map 文件上传到服务端。
 
