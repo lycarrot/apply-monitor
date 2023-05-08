@@ -1,14 +1,17 @@
 ## 项目介绍
 
 <image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/logo.png" width="80%">
-本项目是一个完整的监控平台体系，项目信息收集sdk、服务端接口API信息处理均已实现，监控后台信息平台管理还在实现中，采用monorepo+pnpm方式开发。
+![CI](https://github.com/lycarrot/apply-monitor/actions/workflows/pr-main.yml/badge.svg)
+![CD](https://github.com/lycarrot/apply-monitor/actions/workflows/push-main.yml/badge.svg)
+
+本项目是一个完整的监控平台体系，项目信息收集 sdk、服务端接口 API 信息处理均已实现，监控后台信息平台管理还在实现中，采用 monorepo+pnpm 方式开发。
 
 ## 项目结构
 
-整体项目核心包括三部分
-
 ```
 ├── .changeset 包版本维护
+├── .github
+    ├── .workflows  github-actions配置
 ├── .husky 发布到github校验
 ├── docs  静态资源
 ├── _tests sdk测试
@@ -20,6 +23,7 @@
 ├── .eslintignore
 ├── .eslintrc
 ├── .npmrc
+├── .nvmrc
 ├──.prettierrc
 ├── commitlint.config
 ├── pnpm-workspace.yaml
@@ -30,16 +34,20 @@
 
 ## 项目整体架构
 
-<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/framework.png" width="70%">
+<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/monitor.png" width="80%">
+### 核心部分
+信息收集sdk：<a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/monitor">monitor</a></br>
+信息处理分析:<a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/server">server</a>
+信息管理平台(实现中)：<a href="https://github.com/lycarrot/apply-monitor/tree/main/packages/monitor">admin</a>
 
-### monitor（信息收集）
+### monitor（信息收集 sdk）
 
 整个 sdk 其实是做了俩部分工作，信息采集+信息上报
 
 #### 信息采集
 
 信息采集包括三个部分：错误监控、行为监控、性能监控三个部分
-<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/info.png" width="80%">
+<image src="https://github.com/lycarrot/apply-monitor/blob/main/docs/assets/sdk.png" width="80%">
 
 #### 信息上报
 
