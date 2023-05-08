@@ -1,8 +1,9 @@
 {
   "name": "apply-monitor",
+  "packageManager": "pnpm@8.3.1",
   "private": "true",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.3",
+  "description": "完整监控体系",
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.md --max-warnings 0 --cache",
@@ -16,7 +17,7 @@
     "monitor:build:watch": "pnpm run -C ./packages/monitor build:watch",
     "server": "pnpm run -C ./packages/server start"
   },
-  "keywords": [],
+  "keywords": ["monitor"],
   "author": "luoying",
   "license": "ISC",
   "dependencies": {
@@ -36,6 +37,9 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "engines": {
+    "node": ">= 16"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue,md}": [
