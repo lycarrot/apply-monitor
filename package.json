@@ -38,6 +38,9 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
+  "engines": {
+    "node": ">= 16"
+  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue,md}": [
       "prettier --write",
