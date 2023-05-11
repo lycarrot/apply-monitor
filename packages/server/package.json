@@ -9,8 +9,8 @@
   "author": "luoying",
   "license": "ISC",
   "dependencies": {
-    "@apply-monitor/eslint-config": "workspace:*",
-    "@apply-monitor/report": "workspace:*",
+    "@apply-monitor/eslint-config": "*",
+    "@apply-monitor/report": "*",
     "@babel/cli": "^7.21.0",
     "@babel/core": "^7.21.0",
     "@babel/node": "^7.20.7",
