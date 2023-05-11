@@ -136,10 +136,10 @@ importers:
   packages/server:
     dependencies:
       '@apply-monitor/eslint-config':
-        specifier: workspace:*
+        specifier: '*'
         version: link:../eslint-config
       '@apply-monitor/report':
-        specifier: workspace:*
+        specifier: '*'
         version: link:../report
       '@babel/cli':
         specifier: ^7.21.0
