@@ -1,0 +1,41 @@
+name: PR MAIN
+on:
+  push:
+    branches: main
+    paths: 'packages/server/**'
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.1"
+      - name: Installing Dependencies
+        run: npm install 
+      - name: Build 
+        run: npm run build 
+
+      - name: Log in to Docker Hub #登陆docker
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  #docker的用户名
+          password: ${{ secrets.DOCKER_PASSWORD }}	#docker的密码
+
+      - name: Extract metadata (tags, labels) for Docker # 获取元数据包括tag和labels
+        id: meta
+        uses: docker/metadata-action@v2
+        with:
+          images: vite-project
+
+      - name: Build and push Docker image  #构建和发布 docker镜像
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: luoying66/vite-project:1.0.0  #上一步所拿到的tags，默认是分支名字
+          labels: ${{ steps.meta.outputs.labels }} # 上一步所拿到的labels
+
+   
