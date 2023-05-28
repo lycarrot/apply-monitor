@@ -4,7 +4,6 @@
 
 <p align="center">
 <image src="https://github.com/lycarrot/apply-monitor/actions/workflows/pr-main.yml/badge.svg">
-<image src="https://github.com/lycarrot/apply-monitor/actions/workflows/push-main.yml/badge.svg"><br/>
 <p>
 
 本项目是一个完整的监控平台体系，项目信息收集 sdk、服务端接口 API 信息处理均已实现，监控后台信息平台管理还在实现中，采用 monorepo+pnpm 方式开发。
@@ -37,6 +36,7 @@
 
 ## 项目整体架构
 
+整个监控体系核心部分主要分成三部分，首先是 sdk 植入到各个需要监控到的项目中，然后监控信息会上报到统一的的服务器进行处理存储，最后是统一的监控平台对监控信息进行展示
 <image src="https://img-1301800639.cos.ap-guangzhou.myqcloud.com/monitor.png">
 
 ### 核心部分
@@ -53,7 +53,7 @@
 
 信息采集包括三个部分：错误监控、行为监控、性能监控三个部分
 
-<image src="https://img-1301800639.cos.ap-guangzhou.myqcloud.com/sdk.png" >
+<image src="https://img-1301800639.cos.ap-guangzhou.myqcloud.com/sdk.png"/>
 
 #### 信息上报
 
