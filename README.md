@@ -37,7 +37,7 @@
 ## 项目整体架构
 
 整个监控体系核心部分主要分成三部分，首先是 sdk 植入到各个需要监控到的项目中，然后监控信息会上报到统一的的服务器进行处理存储，最后是统一的监控平台对监控信息进行展示
-<image src="https://img-1301800639.cos.ap-guangzhou.myqcloud.com/monitor.png">
+<image src="https://img-1301800639.cos.ap-guangzhou.myqcloud.com/monitor%20%281%29%281%29.png"></image>
 
 ### 核心部分
 
