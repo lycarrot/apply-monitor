@@ -53,7 +53,7 @@
 
 信息采集包括三个部分：错误监控、行为监控、性能监控三个部分
 
-<image src="https://img-1301800639.cos.ap-guangzhou.myqcloud.com/sdk.png" width="85%" height="85%"/>
+![信息采集](https://img-1301800639.cos.ap-guangzhou.myqcloud.com/sdk.png)
 
 #### 信息上报
 
