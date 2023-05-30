@@ -38,13 +38,6 @@ app
     })
   )
   .use(cors())
-  // .use(
-  //   jwt({
-  //     secret: config.get("secret"),
-  //   }).unless({
-  //     path: [/api\/collect\/info\/detail/],  //跳过登录态的请求
-  //   })
-  // )
   .use(router.routes())
   .use(router.allowedMethods())
 
