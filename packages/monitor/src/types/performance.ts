@@ -10,6 +10,7 @@ export enum PerformanceType {
   NAV = 'navigation',
   MRY = 'memory',
   DICE = 'devices',
+  WHITE = 'white-screen',
 }
 
 export interface PerformanceReportData extends BaseReportData {

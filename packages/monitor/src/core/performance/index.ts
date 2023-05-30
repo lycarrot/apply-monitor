@@ -7,6 +7,8 @@ import { getNavTiming } from './getNavTiming'
 import { getMemory } from './getMemory'
 import { getNavConnection } from './getNavConnection'
 import { getDevices } from './getDevices'
+import { getWhiteScreen } from './getWhiteScreen'
+
 import { Store, ReportInfo } from '../../common'
 import { onLoaded, onHidden, beforeUnload, getNowTime } from '../../utils'
 import {
@@ -24,9 +26,9 @@ class Performance {
   constructor(options: InitOptions) {
     this.newStore = new Store()
     this.reportInfo = new ReportInfo(options)
-    this.init()
+    this.init(options)
   }
-  init() {
+  init(options: InitOptions) {
     getFP(this.setStore.bind(this))
     getLCP(this.setStore.bind(this))
     getCLS(this.setStore.bind(this))
@@ -36,6 +38,7 @@ class Performance {
     getFSP(this.setStore.bind(this))
     getMemory(this.setStore.bind(this))
     getDevices(this.setStore.bind(this))
+    getWhiteScreen(this.setStore.bind(this), options)
     this.report()
   }
   report() {

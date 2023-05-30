@@ -21,4 +21,6 @@ export interface InitOptions {
   // 监听vue路由跳转
   isVueJump: boolean
   router?: any
+  //是否有骨架屏
+  isSkeletonScreen: boolean
 }
