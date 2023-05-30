@@ -51,6 +51,7 @@
     PerformanceType['NAV'] = 'navigation'
     PerformanceType['MRY'] = 'memory'
     PerformanceType['DICE'] = 'devices'
+    PerformanceType['WHITE'] = 'white-screen'
   })(PerformanceType || (PerformanceType = {}))
 
   var BehaviorType
@@ -1018,13 +1019,107 @@
     setStore(PerformanceType.DICE, info)
   }
 
+  function getWhiteScreen(setStore, options) {
+    var isSkeletonScreen = options.isSkeletonScreen
+    var pooCount = 0
+    var startSampLists = []
+    var nowSampLists = []
+    var containerLists = ['html', 'body', '#app', '#root']
+    var timer = null
+    if (options.isSkeletonScreen) {
+      if (document.readyState != 'complete') {
+        onSamp()
+      }
+    } else {
+      if (document.readyState === 'complete') {
+        onSamp()
+      } else {
+        window.addEventListener('load', onSamp)
+      }
+    }
+    function getSelector(element) {
+      if (element.id) {
+        return '#' + element.id
+      } else if (element.className) {
+        return (
+          '.' +
+          element.className
+            .split(' ')
+            .filter(function (item) {
+              return !!item
+            })
+            .join('.')
+        )
+      } else {
+        return element.nodeName.toLowerCase()
+      }
+    }
+    function isContainer(element) {
+      var selector = getSelector(element)
+      if (isSkeletonScreen) {
+        pooCount ? nowSampLists.push(selector) : startSampLists.push(selector)
+      }
+      return containerLists === null || containerLists === void 0
+        ? void 0
+        : containerLists.includes(selector)
+    }
+    // 采样对比
+    function onSamp() {
+      var points = 0
+      for (var i = 1; i <= 9; i++) {
+        var xElements = document.elementsFromPoint(
+          (window.innerWidth * i) / 10,
+          window.innerHeight / 2
+        )
+        var yElements = document.elementsFromPoint(
+          window.innerWidth / 2,
+          (window.innerHeight * i) / 10
+        )
+        if (isContainer(xElements[0])) points++
+        //避免中心点计算多次
+        if (i != 5) {
+          if (isContainer(yElements[0])) points++
+        }
+      }
+      console.log('ds', points)
+      if (points != 17) {
+        if (isSkeletonScreen) {
+          if (!pooCount) return onLoop()
+          if (nowSampLists.join() == startSampLists.join())
+            setStore(PerformanceType.WHITE, { isWhite: true })
+          return
+        }
+        if (timer) {
+          clearTimeout(timer)
+          timer = null
+        }
+      } else {
+        if (!timer) {
+          onLoop()
+        }
+      }
+      setStore(PerformanceType.WHITE, { isWhite: points == 17 ? true : false })
+    }
+    //白屏轮训检测
+    function onLoop() {
+      if (timer) return
+      timer = setInterval(function () {
+        if (isSkeletonScreen) {
+          pooCount++
+          nowSampLists = []
+        }
+        onSamp()
+      }, 1000)
+    }
+  }
+
   var Performance = /** @class */ (function () {
     function Performance(options) {
       this.newStore = new Store()
       this.reportInfo = new ReportInfo(options)
-      this.init()
+      this.init(options)
     }
-    Performance.prototype.init = function () {
+    Performance.prototype.init = function (options) {
       getFP(this.setStore.bind(this))
       getLCP(this.setStore.bind(this))
       getCLS(this.setStore.bind(this))
@@ -1034,6 +1129,7 @@
       getFSP(this.setStore.bind(this))
       getMemory(this.setStore.bind(this))
       getDevices(this.setStore.bind(this))
+      getWhiteScreen(this.setStore.bind(this), options)
       this.report()
     }
     Performance.prototype.report = function () {

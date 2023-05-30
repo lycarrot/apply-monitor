@@ -7,11 +7,11 @@
 </template>
 <script>
 export default {
-  created() {
-    a = null;
-    a.length;
-  },
-};
+  // created() {
+  //   a = null;
+  //   a.length;
+  // },
+}
 </script>
 
 <style lang="less">

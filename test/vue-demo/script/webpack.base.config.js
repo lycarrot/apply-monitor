@@ -1,49 +1,50 @@
-const glob = require("glob");
-const path = require("path");
-const webpack = require("webpack");
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const cleanWebpackPlugin = require("clean-webpack-plugin");
-const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+const glob = require('glob')
+const path = require('path')
+const webpack = require('webpack')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const cleanWebpackPlugin = require('clean-webpack-plugin')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 // 从css文件中提取css代码到单独的文件中，对css代码进行代码压缩等
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+// import SkeletonWebpackPlugin from 'vue-skeleton-webpack-plugin';
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: './src/index.js',
   output: {
-    filename: "[name].[hash].js",
-    path: path.join(__dirname, "../dist"),
+    filename: '[name].[hash].js',
+    path: path.join(__dirname, '../dist'),
   },
   module: {
     rules: [
       {
         test: /.js$/,
-        use: ["babel-loader"],
+        use: ['babel-loader'],
       },
       {
         test: /.vue$/,
-        use: "vue-loader",
+        use: 'vue-loader',
       },
       {
         test: /.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /.less$/,
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader",
-          "less-loader",
-          "postcss-loader",
+          'css-loader',
+          'less-loader',
+          'postcss-loader',
         ],
       },
       {
         test: /.(png|jpg|gif|jpeg)$/,
         use: [
           {
-            loader: "file-loader",
+            loader: 'file-loader',
             options: {
-              name: "[name]_[hash:8].[ext]",
+              name: '[name]_[hash:8].[ext]',
             },
           },
         ],
@@ -52,9 +53,9 @@ module.exports = {
         test: /.(woff|woff2|eot|ttf|otf)$/,
         use: [
           {
-            loader: "file-loader",
+            loader: 'file-loader',
             options: {
-              name: "[name]_[hash:8][ext]",
+              name: '[name]_[hash:8][ext]',
             },
           },
         ],
@@ -68,15 +69,14 @@ module.exports = {
       clearConsole: true,
     }),
     new MiniCssExtractPlugin({
-      filename: "[name]_[contenthash].css",
+      filename: '[name]_[contenthash].css',
     }),
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname,'../index.html'),
+      template: path.join(__dirname, '../index.html'),
       filename: 'index.html',
       // chunks: [name],
       inject: true,
     }),
-
   ],
-};
+}
