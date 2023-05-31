@@ -15,16 +15,23 @@ jobs:
           node-version: "16.1"
       - name: Installing Dependencies
         run: cd packages/server&&npm install 
-      - name: Log in to Docker Hub #登陆docker
-        uses: docker/login-action@v1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}  #docker的用户名
-          password: ${{ secrets.DOCKER_PASSWORD }}	#docker的密码
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: user/app:latest
+            tags: luoying66/monitor-server:latest
             context: ./packages/server
+            
 
    
