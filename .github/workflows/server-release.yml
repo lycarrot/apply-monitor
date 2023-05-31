@@ -13,10 +13,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16.1"
-      - name: Cd directory
-        run: cd packages/server 
       - name: Installing Dependencies
-        run: npm install 
+        run: cd packages/server&&npm install 
       - name: Log in to Docker Hub #登陆docker
         uses: docker/login-action@v1
         with:

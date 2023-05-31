@@ -2,7 +2,7 @@
  # 指定制作我们的镜像的联系人信息
  MAINTAINER luoying66
  
- # 将根目录下的文件都copy到container（运行此镜像的容器）    文件系统的app文件夹下
+ # 将根目录下的文件都copy到container（运行此镜像的容器）     文件系统的app文件夹下
  ADD . /app/
  # cd到app文件夹下
  WORKDIR /app
