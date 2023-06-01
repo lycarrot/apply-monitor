@@ -15,23 +15,25 @@ jobs:
           node-version: "16.1"
       - name: Installing Dependencies
         run: cd packages/server&&npm install 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - name: Log in to Docker Hub #登陆docker
+        uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push
-        uses: docker/build-push-action@v4
+          username: ${{ secrets.DOCKER_USERNAME }}  #docker的用户名
+          password: ${{ secrets.DOCKER_PASSWORD }}	#docker的密码
+
+      - name: Extract metadata (tags, labels) for Docker # 获取元数据包括tag和labels
+        id: meta
+        uses: docker/metadata-action@v2
         with:
-            push: true
-            tags: luoying66/monitor-server:latest
-            context: ./packages/server
+          images: monitor-server
+
+      - name: Build and push Docker image  #构建和发布 docker镜像
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: luoying66/monitor-server:latest  #上一步所拿到的tags，默认是分支名字
+          labels: ${{ steps.meta.outputs.labels }} # 上一步所拿到的labels
             
 
    
