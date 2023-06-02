@@ -18,6 +18,7 @@ jobs:
       - name: Log in to Docker Hub #登陆docker
         uses: docker/login-action@v1
         with:
+          registry: registry.cn-guangzhou.aliyuncs.com
           username: ${{ secrets.DOCKER_USERNAME }}  #docker的用户名
           password: ${{ secrets.DOCKER_PASSWORD }}	#docker的密码
 
@@ -25,14 +26,15 @@ jobs:
         id: meta
         uses: docker/metadata-action@v2
         with:
-          images: monitor-server
+          images: registry.cn-guangzhou.aliyuncs.com/lycarrot/monitor-server
+          tags: latest
 
       - name: Build and push Docker image  #构建和发布 docker镜像
         uses: docker/build-push-action@v2
         with:
           context: ./packages/server
           push: true
-          tags: luoying66/monitor-server:latest  #上一步所拿到的tags，默认是分支名字
+          tags: monitor-server:latest  #上一步所拿到的tags，默认是分支名字
           labels: ${{ steps.meta.outputs.labels }} # 上一步所拿到的labels
             
 
