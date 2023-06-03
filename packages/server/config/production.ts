@@ -3,7 +3,7 @@ export default {
   host: '127.0.0.1',
   secret: '123456',
   mysql: {
-    database: 'monitor-release',
+    database: 'monitor',
     user: 'root',
     password: '123456',
     host: '8.134.132.121',
@@ -12,6 +12,7 @@ export default {
   redis: {
     host: '8.134.132.121',
     port: 6379,
+    password: '123456',
   },
   kueRedis: {
     host: '8.134.132.121',
