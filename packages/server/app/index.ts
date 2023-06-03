@@ -19,7 +19,7 @@ global.log = bunyan.createLogger({
 })
 
 const port = config.get('port') as number
-const hostname = config.get('port') as string
+const hostname = config.get('hostname') as string
 
 const app = new Koa()
 
