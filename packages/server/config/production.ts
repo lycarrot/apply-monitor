@@ -10,12 +10,12 @@ export default {
     port: 3306,
   },
   redis: {
-    host: '8.134.132.121',
+    host: '127.0.0.1',
     port: 6379,
-    password: '123456',
+    password: '',
   },
   kueRedis: {
-    host: '8.134.132.121',
+    host: '127.0.0.1',
     port: 6379,
   },
   sourceMap: 'static/sourcemap',

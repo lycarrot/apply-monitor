@@ -8,7 +8,7 @@
  WORKDIR /app
   
  # 安装项目依赖包
- RUN npm install
+#  RUN npm install
 
  
  # 容器对外暴露的端口号
