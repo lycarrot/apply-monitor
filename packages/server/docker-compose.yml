@@ -1,0 +1,8 @@
+version: "3.7"
+services:
+    info:
+        container_name: monitor-server
+        image: registry.cn-guangzhou.aliyuncs.com/lycarrot/monitor-server:latest
+        ports:
+            - "8082:8888"
+        restart: on-failure

@@ -8,11 +8,13 @@
  WORKDIR /app
   
  # 安装项目依赖包
- RUN npm install
+ RUN npm install 
+ 
+
 
  
  # 容器对外暴露的端口号
- EXPOSE 8080
+ EXPOSE 8888
  
  # 容器启动时执行的命令，类似npm run start
- CMD ["npm", "run", "prod"]
+ CMD ["npm", "run", "start"]

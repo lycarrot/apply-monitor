@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@types/koa-multer": "^1.0.1",
+    "agenda": "^5.0.0",
     "bunyan": "^1.8.15",
     "co": "^4.6.0",
     "config": "^3.3.9",
@@ -59,6 +60,7 @@
     "kue": "^0.11.6",
     "moment": "^2.29.4",
     "mysql2": "^3.2.0",
+    "node-schedule": "^2.1.1",
     "nodemon": "^1.11.0",
     "redis": "^4.6.5",
     "request": "^2.81.0",

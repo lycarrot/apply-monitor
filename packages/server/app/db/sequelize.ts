@@ -12,7 +12,6 @@ interface MysqlConfig {
 }
 
 const mysqlConfig: MysqlConfig = config.get('mysql')
-
 // 数据库链接
 const sequelize = new Sequelize(
   mysqlConfig.database,
@@ -42,6 +41,6 @@ sequelize
     log.error('Unable to connect to the database:', err)
   })
 
-// mysql.sync({ force: false })
+// sequelize.sync({ force: false })
 
 export default sequelize
