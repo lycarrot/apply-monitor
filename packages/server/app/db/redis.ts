@@ -10,7 +10,6 @@ const redisServers = config.get('redis') as ObjectConfig
 Object.keys(redisServers).forEach((item) => {
   const redisConfig = redisServers[item]
   let client
-  // 如果配置项是数组则使用 cluster 模式连接
   if (Array.isArray(redisConfig)) {
     client = new Redis.Cluster(redisConfig)
   } else {

@@ -1,5 +1,5 @@
 export default {
-  port: 8080,
+  port: 8888,
   host: '127.0.0.1',
   secret: '123456',
   mysql: {
