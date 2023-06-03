@@ -17,6 +17,7 @@ export default {
   kueRedis: {
     host: '8.134.132.121',
     port: 6379,
+    password: '123456',
   },
   sourceMap: 'static/sourcemap',
 }
