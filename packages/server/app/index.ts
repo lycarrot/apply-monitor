@@ -19,7 +19,7 @@ global.log = bunyan.createLogger({
 })
 
 const port = config.get('port') as number
-const hostname = config.get('hostname') as string
+const host = config.get('host') as string
 
 const app = new Koa()
 
@@ -43,8 +43,8 @@ app
 
 validate(app)
 
-app.listen(port, hostname, () => {
-  log.info(`Koa is listening in http://${hostname}:${port}`)
+app.listen(port, host, () => {
+  log.info(`Koa is listening in http://${host}:${port}`)
 })
 
 export default app
