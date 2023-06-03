@@ -3,7 +3,8 @@
   "description": "监控平台服务端",
   "version": "0.0.0",
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan"
+    "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan",
+    "prod": "cross-env NODE_ENV=production nodemon --watch app --exec ts-node --files   index.ts | bunyan"
   },
   "private": true,
   "author": "luoying",
