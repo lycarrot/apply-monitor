@@ -1,6 +1,6 @@
 export default {
   port: 6666,
-  host: '8.134.132.121',
+  host: '127.0.0.1',
   secret: '123456',
   mysql: {
     database: 'monitor',

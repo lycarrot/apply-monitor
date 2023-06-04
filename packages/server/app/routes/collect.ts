@@ -9,7 +9,7 @@ const router = new Router()
 
 router.post('/info/detail', async (ctx: Context) => {
   const request: Request = ctx.request
-  const data = JSON.parse(request.body as string) as ReportData
+  const data = JSON.parse(JSON.stringify(request.body as string)) as ReportData
   const {
     secondType,
     value,
