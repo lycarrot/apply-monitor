@@ -6,15 +6,15 @@ export default {
     database: 'monitor',
     user: 'root',
     password: '123456',
-    host: '8.134.132.121',
+    host: '127.0.0.1',
     port: 3306,
   },
   redis: {
-    host: '8.134.132.121',
+    host: '127.0.0.1',
     port: 6379,
   },
   kueRedis: {
-    host: '8.134.132.121',
+    host: '127.0.0.1',
     port: 6379,
   },
   sourceMap: 'static/sourcemap',
