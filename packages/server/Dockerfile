@@ -17,4 +17,4 @@
  EXPOSE 6666
  
  # 容器启动时执行的命令，类似npm run start
- CMD ["npm", "run", "start"]
+ CMD ["npm", "run", "prod"]
