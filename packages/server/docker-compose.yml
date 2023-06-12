@@ -3,6 +3,9 @@ services:
     info:
         container_name: monitor-server
         image: registry.cn-guangzhou.aliyuncs.com/lycarrot/monitor-server:latest
+        environment:
+            - APP_ID=92708
+            - APP_SECRET=5db96e9f6147654145c106e726eb3fa6514382c6
         ports:
             - "80:6666"
         restart: on-failure
