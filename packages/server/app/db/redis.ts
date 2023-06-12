@@ -16,7 +16,7 @@ Object.keys(redisServers).forEach((item) => {
     client = new Redis(redisConfig)
   }
   client.on('error', (err) => {
-    log.error(`${item} redis error: ${err}`)
+    log.error(`${item} redis error11: ${err}`)
   })
   client.on('ready', () => {
     log.info(`${item} redis connected`)
