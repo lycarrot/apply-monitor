@@ -1,5 +1,5 @@
-FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:latest
- # 指定制作我们的镜像的联系人信息
+FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:4.7.2
+ # 指定制作我们的镜像的联系人信息 
  MAINTAINER luoying66
  
  # 将根目录下的文件都copy到container（运行此镜像的容器）       文件系统的app文件夹下
