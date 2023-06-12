@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:4.7.2
+ FROM node:16.15.1
  # 指定制作我们的镜像的联系人信息 
  MAINTAINER luoying66
  
