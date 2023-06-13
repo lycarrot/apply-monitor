@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:4.7.2
+FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:5.15.0-alpine
  # 指定制作我们的镜像的联系人信息 
  MAINTAINER luoying66
  
@@ -10,7 +10,6 @@ FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:4.7.2
  # 安装项目依赖包
  RUN npm install 
  
-
 
  
  # 容器对外暴露的端口号
