@@ -14,6 +14,8 @@ RUN npm install
 
 FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:4.7.2
 
+WORKDIR /app
+
 EXPOSE 6666
 
 CMD ["npm", "run", "prod"]
