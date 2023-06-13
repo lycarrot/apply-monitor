@@ -122,7 +122,7 @@ importers:
         version: 2.8.3
       request-promise:
         specifier: ^4.2.1
-        version: 4.2.1(request@2.81.0)
+        version: 4.2.1(request@2.88.2)
       rollup:
         specifier: ^3.11.0
         version: 3.11.0
@@ -136,10 +136,10 @@ importers:
   packages/server:
     dependencies:
       '@apply-monitor/eslint-config':
-        specifier: '*'
+        specifier: ^1.0.0
         version: link:../eslint-config
       '@apply-monitor/report':
-        specifier: '*'
+        specifier: ^1.0.0
         version: link:../report
       '@babel/cli':
         specifier: ^7.21.0
@@ -4125,7 +4125,6 @@ packages:
   /aws-sign2@0.7.0:
     resolution: {integrity: sha512-08kcGqnYf/YmjoRhfxyu+CLxBjUtHLXLXX/vUfx9l2LYzG3c1m61nrpyFUZI6zeS+Li/wWMMidD9KgrqtGq3mA==}
     dev: true
-    optional: true
 
   /aws4@1.12.0:
     resolution: {integrity: sha512-NmWvPnx0F1SfrQbYwOi7OeaNGokp9XhzNioJ/CSBs8Qa4vxug81mhJEAVZwxXuBmYB5KDRfMq/F3RR0BIU7sWg==}
@@ -7245,7 +7244,6 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
     dev: true
-    optional: true
 
   /forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -7657,7 +7655,6 @@ packages:
     resolution: {integrity: sha512-Oqluz6zhGX8cyRaTQlFMPw80bSJVG2x/cFb8ZPhUILGgHka9SsokCCOQgpveePerqidZOrT14ipqfJb7ILcW5Q==}
     engines: {node: '>=4'}
     dev: true
-    optional: true
 
   /har-validator@4.2.1:
     resolution: {integrity: sha512-5Gbp6RAftMYYV3UEI4c4Vv3+a4dQ7taVyvHt+/L6kRt+f4HX1GweAk5UDWN0SvdVnRBzGQ6OG89pGaD9uSFnVw==}
@@ -7676,7 +7673,6 @@ packages:
       ajv: 6.12.6
       har-schema: 2.0.0
     dev: true
-    optional: true
 
   /hard-rejection@2.1.0:
     resolution: {integrity: sha512-VIZB+ibDhx7ObhAe7OVtoEbuP4h/MuOTHJ+J8h/eBXotJYl0fBgR72xDFCKgIh22OJZIOVNxBMWuhAr10r8HdA==}
@@ -8055,7 +8051,6 @@ packages:
       jsprim: 1.4.2
       sshpk: 1.17.0
     dev: true
-    optional: true
 
   /https-browserify@1.0.0:
     resolution: {integrity: sha512-J+FkSdyD+0mA0N+81tMotaRMfSL9SGi+xpD3T6YApKsc3bGSXJlfXri3VyFOeYkfLRQisDk1W+jIFFKBeUBbBg==}
@@ -10498,7 +10493,6 @@ packages:
   /oauth-sign@0.9.0:
     resolution: {integrity: sha512-fexhUFFPTGV8ybAtSIGbV6gOkSv8UtRbDBnAyLQw4QPKkgNlsH2ByPGtMUqdWkos6YCRmAqViwgZrJc/mRDzZQ==}
     dev: true
-    optional: true
 
   /object-assign@3.0.0:
     resolution: {integrity: sha512-jHP15vXVGeVh1HuaA2wY6lxk+whK/x4KBG88VXeRma7CCun7iGD5qPc4eYykQ9sdQvg8jkwFKsSxHln2ybW3xQ==}
@@ -11036,7 +11030,6 @@ packages:
   /performance-now@2.1.0:
     resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
     dev: true
-    optional: true
 
   /pg-connection-string@2.6.0:
     resolution: {integrity: sha512-x14ibktcwlHKoHxx9X3uTVW9zIGR41ZB6QNhHb21OPNdCCO3NaRnpJuwKIQSR4u+Yqjx4HCvy7Hh7VSy1U4dGg==}
@@ -12006,7 +11999,6 @@ packages:
     resolution: {integrity: sha512-qxXIEh4pCGfHICj1mAJQ2/2XVZkjCDTcEgfoSQxc/fYivUZxTkk7L3bDBJSoNrEzXI17oUO5Dp07ktqE5KzczA==}
     engines: {node: '>=0.6'}
     dev: true
-    optional: true
 
   /query-string@5.1.1:
     resolution: {integrity: sha512-gjWOsm2SoGlgLEdAGt7a6slVOk9mGiXmPFMqrEhLQ68rhQuBnpfs3+EmlvqKyxnCo9/PPlF+9MtY02S1aFg+Jw==}
@@ -12391,6 +12383,16 @@ packages:
       request: 2.81.0
     dev: true
 
+  /request-promise-core@1.1.1(request@2.88.2):
+    resolution: {integrity: sha512-paa/JFJUwUCx5ksokBlaGIXAvIDB+izsRU6FpHrlezFU2fj8555sKN4r+wPyql5d5Bp1ya/vrUPfVqM51v2H0g==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      request: ^2.34
+    dependencies:
+      lodash: 4.17.21
+      request: 2.88.2
+    dev: true
+
   /request-promise@4.2.1(request@2.81.0):
     resolution: {integrity: sha512-ALmLyXY21OefVThaAdbqlNfjmlQVglgI+peW4etVt+7cWlrAYSSjzdcuvB0oPElQzhRAQlj9v0xbWqdu5i8quQ==}
     engines: {node: '>=0.10.0'}
@@ -12401,6 +12403,20 @@ packages:
       bluebird: 3.7.2
       request: 2.81.0
       request-promise-core: 1.1.1(request@2.81.0)
+      stealthy-require: 1.1.1
+      tough-cookie: 4.1.2
+    dev: true
+
+  /request-promise@4.2.1(request@2.88.2):
+    resolution: {integrity: sha512-ALmLyXY21OefVThaAdbqlNfjmlQVglgI+peW4etVt+7cWlrAYSSjzdcuvB0oPElQzhRAQlj9v0xbWqdu5i8quQ==}
+    engines: {node: '>=0.10.0'}
+    deprecated: request-promise has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
+    peerDependencies:
+      request: ^2.34
+    dependencies:
+      bluebird: 3.7.2
+      request: 2.88.2
+      request-promise-core: 1.1.1(request@2.88.2)
       stealthy-require: 1.1.1
       tough-cookie: 4.1.2
     dev: true
@@ -12461,7 +12477,6 @@ packages:
       tunnel-agent: 0.6.0
       uuid: 3.4.0
     dev: true
-    optional: true
 
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
@@ -13804,7 +13819,6 @@ packages:
       psl: 1.9.0
       punycode: 2.3.0
     dev: true
-    optional: true
 
   /tough-cookie@4.1.2:
     resolution: {integrity: sha512-G9fqXWoYFZgTc2z8Q5zaHy/vJMjm+WV0AkAeHxVCQiEB1b+dGvWzFW6QV07cY5jQ5gRkeid2qIkzkxUnmoQZUQ==}

@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan",
-    "prod": "cross-env NODE_ENV=production  NODE_LOG_DIR=/tmp ENABLE_NODE_LOG=YES nodemon --watch app --exec ts-node --files   index.ts | bunyan"
+    "prod": "cross-env NODE_ENV=production  NODE_LOG_DIR=/tmp ENABLE_NODE_LOG=YES  ts-node --files   index.ts | bunyan"
   },
   "private": true,
   "author": "luoying",
   "license": "ISC",
   "dependencies": {
-    "@apply-monitor/eslint-config": "*",
-    "@apply-monitor/report": "*",
+    "@apply-monitor/eslint-config": "^1.0.0",
+    "@apply-monitor/report": "^1.0.0",
     "@babel/cli": "^7.21.0",
     "@babel/core": "^7.21.0",
     "@babel/node": "^7.20.7",
