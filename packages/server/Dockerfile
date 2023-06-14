@@ -14,7 +14,7 @@ WORKDIR /app
   # 安装项目依赖包
 RUN pnpm install
 
-FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:4.7.2
+FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode
 
 
 COPY --from=node /app .
