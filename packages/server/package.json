@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --watch app --exec ts-node --files   index.ts | bunyan",
-    "prod": "cross-env NODE_ENV=production  NODE_LOG_DIR=/tmp ENABLE_NODE_LOG=YES  ts-node --files   index.ts | bunyan"
+    "prod": "cross-env NODE_ENV=production  NODE_LOG_DIR=/tmp ENABLE_NODE_LOG=YES  ts-node --files   index.ts | bunyan",
+    "debug":"cross-env NODE_ENV=development nodemon --watch app --exec node -r ts-node/register -P ./tsconfig.json --inspect  index.ts | bunyan"
   },
   "private": true,
   "author": "luoying",

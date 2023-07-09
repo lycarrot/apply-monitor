@@ -59,7 +59,6 @@ export function getWhiteScreen(setStore: SetStore, options: InitOptions) {
         if (isContainer(yElements[0] as HTMLElement)) points++
       }
     }
-    console.log('ds', points)
     if (points != 17) {
       if (isSkeletonScreen) {
         if (!pooCount) return onLoop()
